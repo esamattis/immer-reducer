@@ -2,12 +2,17 @@
     "name": "@epeli/redux-stack",
     "version": "0.1.0",
     "description": "",
-    "main": "lib/index.js",
+    "main": "build/index.js",
     "scripts": {
         "test": "tsc --noEmit && jest"
     },
     "author": "",
     "license": "ISC",
+    "types": "./typings/src/index.d.ts",
+    "files": [
+        "build/src",
+        "typings/src"
+    ],
     "devDependencies": {
         "@types/jest": "^23.0.2",
         "@types/react": "^16.3.17",
