@@ -1,7 +1,7 @@
 import {createStore} from "redux";
 import {createRedutser} from "../src/redutser-fork/redutser";
 
-test("can render data to react", () => {
+test("can create reducers", () => {
     const initialState = {foo: "bar"};
 
     const foo = createRedutser(initialState, {
