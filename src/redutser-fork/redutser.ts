@@ -1,3 +1,6 @@
+/**
+ * Fork from https://github.com/wkrueger/redutser
+ */
 type SecondArg<T> = T extends (x: any, y: infer V) => any ? V : never;
 type Values<K> = K[keyof K];
 
