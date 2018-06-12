@@ -7,8 +7,9 @@ import {
     Reducer,
     DeepPartial,
 } from "redux";
-import {composeWithDevTools} from "redux-devtools-extension";
 import thunk from "redux-thunk";
+
+const {composeWithDevTools} = require("redux-devtools-extension");
 
 export function getDefaultMiddleware() {
     return [thunk];
