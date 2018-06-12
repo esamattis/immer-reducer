@@ -37,7 +37,7 @@ export function configureStore<State>(options: {
 
     const composedEnhancer = finalCompose(...storeEnhancers);
 
-    const store = createStore(reducer, preloadedState || {}, composedEnhancer);
+    const store = createStore(reducer, preloadedState, composedEnhancer);
 
     return store;
 }

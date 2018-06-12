@@ -23,6 +23,30 @@ test("can create reducers", () => {
     expect(store.getState()).toEqual({foo: "next"});
 });
 
+test("reducers use immer", () => {
+    const initialState = {nest: {foo: "initial"}};
+
+    const foo = createRedutser(initialState, {
+        setFoo(state, action: {foo: string}) {
+            console.log("state", state);
+            state.nest.foo = action.foo;
+            return state;
+        },
+    });
+
+    const store = configureStore({
+        reducer: foo.reducer,
+    });
+
+    store.dispatch(foo.creators.setFoo({foo: "next"}));
+
+    // no mutation
+    expect(initialState.nest.foo).toEqual("initial");
+
+    // state is updated
+    expect(store.getState()).toEqual({nest: {foo: "next"}});
+});
+
 test("can call other reducers", () => {
     const initialState = {foo: "bar"};
 

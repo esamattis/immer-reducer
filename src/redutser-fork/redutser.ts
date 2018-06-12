@@ -2,6 +2,8 @@
  * Fork from https://github.com/wkrueger/redutser
  */
 
+import produce from "immer";
+
 type SecondArg<T> = T extends (x: any, y: infer V) => any ? V : never;
 type Values<K> = K[keyof K];
 
@@ -32,7 +34,9 @@ export const createRedutser = <State, Dict extends ReducerDict<State>>(
         action: ActionTypesFromReducerDict<Dict>,
     ): State {
         if (reducerDict[action.type]) {
-            return reducerDict[action.type](state, action.payload);
+            return produce(state, draftState => {
+                return reducerDict[action.type](draftState, action.payload);
+            });
         }
         return state;
     }
