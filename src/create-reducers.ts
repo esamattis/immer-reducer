@@ -23,11 +23,11 @@ export type ActionTypesFromReducerDict<
     Inp extends ReducerDict<any>
 > = ReturnType<Values<ActionCreatorsFromReducerDict<Inp>>>;
 
-export const createRedutser = <State, Dict extends ReducerDict<State>>(
+export const createReducers = <State, Dict extends ReducerDict<State>>(
     initialState: State,
     reducerDict: Dict,
 ) => {
-    const creators = _actionCreatorsFromReducerDict()(reducerDict);
+    const actionCreators = _actionCreatorsFromReducerDict()(reducerDict);
 
     function reducer(
         state = initialState,
@@ -42,7 +42,7 @@ export const createRedutser = <State, Dict extends ReducerDict<State>>(
     }
 
     return {
-        creators,
+        actionCreators,
         reducer,
         initialState,
         actionTypes: (undefined as any) as ActionTypesFromReducerDict<Dict>,
@@ -53,7 +53,7 @@ export const createRedutser = <State, Dict extends ReducerDict<State>>(
 
 // copy-pasted, maybe helps something
 export interface Redutser<State, Dict extends ReducerDict<State>> {
-    creators: ActionCreatorsFromReducerDict<Dict>;
+    actionCreators: ActionCreatorsFromReducerDict<Dict>;
     reducer: (
         state: State | undefined,
         action: ReturnType<ActionCreatorsFromReducerDict<Dict>[keyof Dict]>,
