@@ -28,7 +28,6 @@ test("reducers use immer", () => {
 
     const foo = createRedutser(initialState, {
         setFoo(state, action: {foo: string}) {
-            console.log("state", state);
             state.nest.foo = action.foo;
             return state;
         },
