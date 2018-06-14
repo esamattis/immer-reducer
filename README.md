@@ -97,7 +97,7 @@ const Thunks = createThunks<State, typeof SimpleActions.types>()({
     setRandomCount() {
         return (dispatch, getState) => {
             dispatch(
-                // Generated Action Creator are available in SimpleActions.creators.
+                // Generated Action Creators are available in SimpleActions.creators.
                 SimpleActions.creators.setCound({newCount: Math.random()}),
             );
         };
@@ -159,27 +159,11 @@ const store = configureStore({
 import {makeCreator} from "redux-render-prop";
 import {bindActionCreators} from "redux";
 
-/**
- * It's ofter used with selector helpers
- */
-class Selectors {
-    state: State;
-
-    constructor(state: State) {
-        this.state = state;
-    }
-
-    getCount() {
-        return this.state.count;
-    }
-}
 
 const AllActions = {...SimpleActions.creators, ...Thunks};
 
 export const createMyAppComponent = makeCreator({
-    prepareState: (state: State) => {
-        return new Selectors(state);
-    },
+    prepareState: (state: State) => state,
 
     prepareActions: dispatch => {
         return bindActionCreators(AllActions, dispatch);
