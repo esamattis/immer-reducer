@@ -29,7 +29,7 @@ Simplifies store creation. Adds redux-thunk middleware and creates devtools conn
 
 [starter]: https://github.com/markerikson/redux-starter-kit
 
-### `createActions()`
+### `createSimpleActions()`
 
 Create action types, action creators and reducers in one go. Immutable updates are made type safe and terse with [Immer][].
 
@@ -47,7 +47,7 @@ This is an no-op function for creating typed object of thunk actions.
 
 ```tsx
 import {
-    createActions,
+    createSimpleActions,
     createThunks,
     composeReducers,
     configureStore,
@@ -64,7 +64,12 @@ const initialState = {
     count: 0,
 };
 
-const SimpleActions = createActions(initialState, {
+/**
+ * Simple actions are simple. No side effects. Just state
+ * updates using Immer. Everything else should be made
+ * using thunks.
+ */
+const SimpleActions = createSimpleActions(initialState, {
     /**
      * draftState is an Immer proxy so the updates can be made in
      * mutable style but the actual result will be properly immutable

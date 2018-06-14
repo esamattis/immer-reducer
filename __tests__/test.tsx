@@ -2,7 +2,7 @@ import React from "react";
 import {Provider} from "react-redux";
 
 import {createThunks} from "../src/create-thunks";
-import {createActions} from "../src/create-actions";
+import {createSimpleActions} from "../src/create-simple-actions";
 import {configureStore} from "../src/configure-store";
 
 const wait = (t: number) => new Promise(r => setTimeout(r, t));
@@ -10,17 +10,17 @@ const wait = (t: number) => new Promise(r => setTimeout(r, t));
 test("can create reducers", () => {
     const initialState = {foo: "bar"};
 
-    const foo = createActions(initialState, {
+    const SimpleActions = createSimpleActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return {...state, foo: action.foo};
         },
     });
 
     const store = configureStore({
-        reducer: foo.reducer,
+        reducer: SimpleActions.reducer,
     });
 
-    store.dispatch(foo.creators.setFoo({foo: "next"}));
+    store.dispatch(SimpleActions.creators.setFoo({foo: "next"}));
 
     expect(store.getState()).toEqual({foo: "next"});
 });
@@ -28,7 +28,7 @@ test("can create reducers", () => {
 test("reducers use immer", () => {
     const initialState = {nest: {foo: "initial"}};
 
-    const foo = createActions(initialState, {
+    const SimpleActions = createSimpleActions(initialState, {
         setFoo(state, action: {foo: string}) {
             state.nest.foo = action.foo;
             return state;
@@ -36,10 +36,10 @@ test("reducers use immer", () => {
     });
 
     const store = configureStore({
-        reducer: foo.reducer,
+        reducer: SimpleActions.reducer,
     });
 
-    store.dispatch(foo.creators.setFoo({foo: "next"}));
+    store.dispatch(SimpleActions.creators.setFoo({foo: "next"}));
 
     // no mutation
     expect(initialState.nest.foo).toEqual("initial");
@@ -51,7 +51,7 @@ test("reducers use immer", () => {
 test("can call other reducers", () => {
     const initialState = {foo: "bar"};
 
-    const foo = createActions(initialState, {
+    const SimpleActions = createSimpleActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return this.setBar(state, {bar: action.foo});
         },
@@ -62,10 +62,10 @@ test("can call other reducers", () => {
     });
 
     const store = configureStore({
-        reducer: foo.reducer,
+        reducer: SimpleActions.reducer,
     });
 
-    store.dispatch(foo.creators.setFoo({foo: "next"}));
+    store.dispatch(SimpleActions.creators.setFoo({foo: "next"}));
 
     expect(store.getState()).toEqual({foo: "nextBAR"});
 });
@@ -73,7 +73,7 @@ test("can call other reducers", () => {
 test("thunks work", () => {
     const initialState = {foo: "bar"};
 
-    const {creators, reducer, types} = createActions(initialState, {
+    const {creators, reducer, types} = createSimpleActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return {...state, foo: action.foo};
         },
@@ -103,7 +103,7 @@ test("thunks can call other thunks", async () => {
     const initialState = {foo: "bar"};
     const thunkSpy = jest.fn();
 
-    const {creators, reducer, types} = createActions(initialState, {
+    const {creators, reducer, types} = createSimpleActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return {...state, foo: action.foo};
         },
