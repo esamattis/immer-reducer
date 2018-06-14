@@ -25,7 +25,7 @@ Small overview. See usage example in the end.
 
 This basically a fork from [`@acemarke/redux-starter-kit`][starter] which is adapted to TypeScript.
 
-Simplifies store creation and add redux-thunk middle and devtools connection automatically.
+Simplifies store creation. Adds redux-thunk middleware and creates devtools connection automatically.
 
 [starter]: https://github.com/markerikson/redux-starter-kit
 
