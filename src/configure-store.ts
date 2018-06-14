@@ -6,6 +6,7 @@ import {
     applyMiddleware,
     Reducer,
     DeepPartial,
+    Store,
 } from "redux";
 import thunk from "redux-thunk";
 
@@ -41,7 +42,10 @@ export function configureStore<State>(options: {
     const store = createStore(reducer, preloadedState as any, composedEnhancer);
 
     return store as {
-        dispatch: (action: {type: string} | ((...args: any[]) => any)) => void;
+        // Custom store type to allow thunks in dispatch
+        dispatch: (action: {type: string} | ((...args: any[]) => any)) => any;
         getState: () => State;
+        subscribe: Store["subscribe"];
+        replaceReducer: Store["replaceReducer"];
     };
 }

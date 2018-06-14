@@ -1,5 +1,7 @@
-import {createThunks} from "../src/create-thunks";
+import React from "react";
+import {Provider} from "react-redux";
 
+import {createThunks} from "../src/create-thunks";
 import {createReducers} from "../src/create-reducers";
 import {configureStore} from "../src/configure-store";
 
@@ -143,4 +145,16 @@ test("thunks can call other thunks", async () => {
 
     expect(thunkSpy).toHaveBeenCalledTimes(2);
     expect(store.getState()).toEqual({foo: "slow"});
+});
+
+it("can assing store to provider (types)", () => {
+    const store = configureStore({
+        reducer: s => "sdf",
+    });
+
+    const app = (
+        <Provider store={store}>
+            <div />
+        </Provider>
+    );
 });
