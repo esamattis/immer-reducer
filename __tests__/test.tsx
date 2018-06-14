@@ -141,7 +141,7 @@ test("thunks can call other thunks", async () => {
     expect(store.getState()).toEqual({foo: "slow"});
 });
 
-it("can assing store to provider (types)", () => {
+test("can assing store to provider (types)", () => {
     const store = configureStore({
         reducer: s => "sdf",
     });
