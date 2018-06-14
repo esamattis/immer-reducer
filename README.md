@@ -9,6 +9,14 @@ I really don't recommend you to use this as is because this is fairly living lib
 
 If you happen to work with me, you're in luck because you are now working with something that is actually somewhat documented :)
 
+## Install
+
+    npm install @epeli/redux-stack
+
+And you will need the React and Redux stuff
+
+    npm install redux react-redux react @types/react @types/react @types/react-redux
+
 ## Exported functions
 
 Small overview. See usage example in the end.
