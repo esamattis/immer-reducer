@@ -134,8 +134,7 @@ test("thunks can call other thunks", async () => {
     const store = configureStore({
         reducer: reducer,
     });
-
-    store.dispatch(Thunks.myThunk(3) as any);
+    store.dispatch(Thunks.myThunk(3));
 
     expect(thunkSpy).toHaveBeenCalledTimes(1);
     expect(store.getState()).toEqual({foo: "first"});

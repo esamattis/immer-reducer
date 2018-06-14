@@ -40,5 +40,8 @@ export function configureStore<State>(options: {
 
     const store = createStore(reducer, preloadedState as any, composedEnhancer);
 
-    return store;
+    return store as {
+        dispatch: (action: {type: string} | ((...args: any[]) => any)) => void;
+        getState: () => State;
+    };
 }
