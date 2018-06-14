@@ -73,25 +73,25 @@ test("can call other reducers", () => {
 test("thunks work", () => {
     const initialState = {foo: "bar"};
 
-    const {creators, reducer, types} = createSimpleActions(initialState, {
+    const SimpleActions = createSimpleActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return {...state, foo: action.foo};
         },
     });
 
-    const Thunks = createThunks<typeof initialState, typeof types>()({
+    const Thunks = createThunks(SimpleActions)({
         myThunk(boo: number) {
             return async dispatch => {
                 // assert return value here too
                 const res: Promise<null> | void = dispatch(
-                    creators.setFoo({foo: "from thunk"}),
+                    SimpleActions.creators.setFoo({foo: "from thunk"}),
                 );
             };
         },
     });
 
     const store = configureStore({
-        reducer: reducer,
+        reducer: SimpleActions.reducer,
     });
 
     store.dispatch(Thunks.myThunk(3) as any);
@@ -103,16 +103,16 @@ test("thunks can call other thunks", async () => {
     const initialState = {foo: "bar"};
     const thunkSpy = jest.fn();
 
-    const {creators, reducer, types} = createSimpleActions(initialState, {
+    const SimpleActions = createSimpleActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return {...state, foo: action.foo};
         },
     });
 
-    const Thunks = createThunks<typeof initialState, typeof types>()({
+    const Thunks = createThunks(SimpleActions)({
         myThunk(boo: number) {
             return async (dispatch, getState) => {
-                dispatch(creators.setFoo({foo: "first"}));
+                dispatch(SimpleActions.creators.setFoo({foo: "first"}));
                 thunkSpy();
                 await dispatch(this.slowThunk());
             };
@@ -122,13 +122,13 @@ test("thunks can call other thunks", async () => {
             return async dispatch => {
                 await wait(50);
                 thunkSpy();
-                dispatch(creators.setFoo({foo: "slow"}));
+                dispatch(SimpleActions.creators.setFoo({foo: "slow"}));
             };
         },
     });
 
     const store = configureStore({
-        reducer: reducer,
+        reducer: SimpleActions.reducer,
     });
     store.dispatch(Thunks.myThunk(3));
 
