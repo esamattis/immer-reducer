@@ -152,3 +152,38 @@ test("can assing store to provider (types)", () => {
         </Provider>
     );
 });
+
+test("can compose multiple reducers", () => {
+    const initialState = {
+        foo: "",
+        bar: "",
+    };
+
+    const reducerSpy1 = jest.fn();
+    const reducerSpy2 = jest.fn();
+
+    const reducer1 = (
+        state: typeof initialState,
+        action: any,
+    ): typeof initialState => {
+        reducerSpy1();
+        return {...state, foo: "reducer1"};
+    };
+
+    const reducer2 = (
+        state: typeof initialState,
+        action: any,
+    ): typeof initialState => {
+        reducerSpy2();
+        return {...state, bar: "reducer2"};
+    };
+
+    const store = configureStore({
+        reducers: [reducer1, reducer2],
+        preloadedState: initialState,
+    });
+
+    expect(reducerSpy1).toHaveBeenCalledTimes(1);
+    expect(reducerSpy2).toHaveBeenCalledTimes(1);
+    expect(store.getState()).toEqual({bar: "reducer2", foo: "reducer1"});
+});
