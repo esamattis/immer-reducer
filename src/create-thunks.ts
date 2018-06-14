@@ -7,13 +7,13 @@ export interface Thunk<State, ActionTypes> {
     ): any;
 }
 
-export function createThunks<State, Actions>(options: {
+export function createThunks<State, ActionTypes>(options: {
     initialState: State;
-    types: Actions;
+    types: ActionTypes;
 }) {
     return function inner<
         ThunkDict extends {
-            [thunk: string]: (...args: any[]) => Thunk<State, Actions>;
+            [thunk: string]: (...args: any[]) => Thunk<State, ActionTypes>;
         }
     >(thunks: ThunkDict) {
         return thunks;
