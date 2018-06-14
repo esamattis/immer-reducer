@@ -121,12 +121,13 @@ const Thunks = createThunks<State, typeof SimpleActions.types>()({
     },
 
     /**
-     * Thunks can call other thunks
+     * Thunks can dispatch other thunks and await on them
+     * if needed.
      */
     doubleFetch() {
         return async (dispatch, getState) => {
             // First fetch the count to the store state
-            await this.fetchCount();
+            await dispatch(this.fetchCount());
 
             // and after that double it
             dispatch(
@@ -158,7 +159,6 @@ const store = configureStore({
 ```tsx
 import {makeCreator} from "redux-render-prop";
 import {bindActionCreators} from "redux";
-
 
 const AllActions = {...SimpleActions.creators, ...Thunks};
 
