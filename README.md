@@ -49,7 +49,6 @@ This is an no-op function for creating typed object of thunk actions.
 import {
     createSimpleActions,
     createThunks,
-    composeReducers,
     configureStore,
 } from "@epeli/redux-stack";
 
