@@ -2,7 +2,7 @@ import React from "react";
 import {Provider} from "react-redux";
 
 import {createThunks} from "../src/create-thunks";
-import {createReducers} from "../src/create-reducers";
+import {createActions} from "../src/create-actions";
 import {configureStore} from "../src/configure-store";
 
 const wait = (t: number) => new Promise(r => setTimeout(r, t));
@@ -10,7 +10,7 @@ const wait = (t: number) => new Promise(r => setTimeout(r, t));
 test("can create reducers", () => {
     const initialState = {foo: "bar"};
 
-    const foo = createReducers(initialState, {
+    const foo = createActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return {...state, foo: action.foo};
         },
@@ -28,7 +28,7 @@ test("can create reducers", () => {
 test("reducers use immer", () => {
     const initialState = {nest: {foo: "initial"}};
 
-    const foo = createReducers(initialState, {
+    const foo = createActions(initialState, {
         setFoo(state, action: {foo: string}) {
             state.nest.foo = action.foo;
             return state;
@@ -51,7 +51,7 @@ test("reducers use immer", () => {
 test("can call other reducers", () => {
     const initialState = {foo: "bar"};
 
-    const foo = createReducers(initialState, {
+    const foo = createActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return this.setBar(state, {bar: action.foo});
         },
@@ -73,14 +73,11 @@ test("can call other reducers", () => {
 test("thunks work", () => {
     const initialState = {foo: "bar"};
 
-    const {actionCreators, reducer, actionTypes} = createReducers(
-        initialState,
-        {
-            setFoo(state, action: {foo: string}) {
-                return {...state, foo: action.foo};
-            },
+    const {actionCreators, reducer, actionTypes} = createActions(initialState, {
+        setFoo(state, action: {foo: string}) {
+            return {...state, foo: action.foo};
         },
-    );
+    });
 
     const Thunks = createThunks<typeof initialState, typeof actionTypes>()({
         myThunk(boo: number) {
@@ -106,14 +103,11 @@ test("thunks can call other thunks", async () => {
     const initialState = {foo: "bar"};
     const thunkSpy = jest.fn();
 
-    const {actionCreators, reducer, actionTypes} = createReducers(
-        initialState,
-        {
-            setFoo(state, action: {foo: string}) {
-                return {...state, foo: action.foo};
-            },
+    const {actionCreators, reducer, actionTypes} = createActions(initialState, {
+        setFoo(state, action: {foo: string}) {
+            return {...state, foo: action.foo};
         },
-    );
+    });
 
     const Thunks = createThunks<typeof initialState, typeof actionTypes>()({
         myThunk(boo: number) {

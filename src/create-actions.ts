@@ -23,7 +23,7 @@ export type ActionTypesFromReducerDict<
     Inp extends ReducerDict<any>
 > = ReturnType<Values<ActionCreatorsFromReducerDict<Inp>>>;
 
-export const createReducers = <State, Dict extends ReducerDict<State>>(
+export const createActions = <State, Dict extends ReducerDict<State>>(
     initialState: State,
     reducerDict: Dict,
 ) => {
