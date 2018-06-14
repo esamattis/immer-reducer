@@ -20,7 +20,7 @@ test("can create reducers", () => {
         reducer: foo.reducer,
     });
 
-    store.dispatch(foo.actionCreators.setFoo({foo: "next"}));
+    store.dispatch(foo.creators.setFoo({foo: "next"}));
 
     expect(store.getState()).toEqual({foo: "next"});
 });
@@ -39,7 +39,7 @@ test("reducers use immer", () => {
         reducer: foo.reducer,
     });
 
-    store.dispatch(foo.actionCreators.setFoo({foo: "next"}));
+    store.dispatch(foo.creators.setFoo({foo: "next"}));
 
     // no mutation
     expect(initialState.nest.foo).toEqual("initial");
@@ -65,7 +65,7 @@ test("can call other reducers", () => {
         reducer: foo.reducer,
     });
 
-    store.dispatch(foo.actionCreators.setFoo({foo: "next"}));
+    store.dispatch(foo.creators.setFoo({foo: "next"}));
 
     expect(store.getState()).toEqual({foo: "nextBAR"});
 });
@@ -73,18 +73,18 @@ test("can call other reducers", () => {
 test("thunks work", () => {
     const initialState = {foo: "bar"};
 
-    const {actionCreators, reducer, actionTypes} = createActions(initialState, {
+    const {creators, reducer, types} = createActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return {...state, foo: action.foo};
         },
     });
 
-    const Thunks = createThunks<typeof initialState, typeof actionTypes>()({
+    const Thunks = createThunks<typeof initialState, typeof types>()({
         myThunk(boo: number) {
             return async dispatch => {
                 // assert return value here too
                 const res: Promise<null> | void = dispatch(
-                    actionCreators.setFoo({foo: "from thunk"}),
+                    creators.setFoo({foo: "from thunk"}),
                 );
             };
         },
@@ -103,16 +103,16 @@ test("thunks can call other thunks", async () => {
     const initialState = {foo: "bar"};
     const thunkSpy = jest.fn();
 
-    const {actionCreators, reducer, actionTypes} = createActions(initialState, {
+    const {creators, reducer, types} = createActions(initialState, {
         setFoo(state, action: {foo: string}) {
             return {...state, foo: action.foo};
         },
     });
 
-    const Thunks = createThunks<typeof initialState, typeof actionTypes>()({
+    const Thunks = createThunks<typeof initialState, typeof types>()({
         myThunk(boo: number) {
             return async (dispatch, getState) => {
-                dispatch(actionCreators.setFoo({foo: "first"}));
+                dispatch(creators.setFoo({foo: "first"}));
                 thunkSpy();
                 await dispatch(this.slowThunk());
             };
@@ -122,7 +122,7 @@ test("thunks can call other thunks", async () => {
             return async dispatch => {
                 await wait(50);
                 thunkSpy();
-                dispatch(actionCreators.setFoo({foo: "slow"}));
+                dispatch(creators.setFoo({foo: "slow"}));
             };
         },
     });

@@ -27,7 +27,7 @@ export const createActions = <State, Dict extends ReducerDict<State>>(
     initialState: State,
     reducerDict: Dict,
 ) => {
-    const actionCreators = _actionCreatorsFromReducerDict()(reducerDict);
+    const creators = _actionCreatorsFromReducerDict()(reducerDict);
 
     function reducer(
         state = initialState,
@@ -42,27 +42,14 @@ export const createActions = <State, Dict extends ReducerDict<State>>(
     }
 
     return {
-        actionCreators,
+        creators,
         reducer,
         initialState,
-        actionTypes: (undefined as any) as ActionTypesFromReducerDict<Dict>,
+        types: (undefined as any) as ActionTypesFromReducerDict<Dict>,
         __redutser__: true,
         _reducerDict: reducerDict,
     };
 };
-
-// copy-pasted, maybe helps something
-export interface Redutser<State, Dict extends ReducerDict<State>> {
-    actionCreators: ActionCreatorsFromReducerDict<Dict>;
-    reducer: (
-        state: State | undefined,
-        action: ReturnType<ActionCreatorsFromReducerDict<Dict>[keyof Dict]>,
-    ) => State;
-    initialState: State;
-    actionTypes: ActionTypesFromReducerDict<Dict>;
-    __redutser__: boolean;
-    _reducerDict: Dict;
-}
 
 function _actionCreatorsFromReducerDict() {
     return <D extends ReducerDict<any>>(
