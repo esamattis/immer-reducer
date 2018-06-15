@@ -79,7 +79,7 @@ test("thunks work", () => {
         },
     });
 
-    const Thunks = createThunks(SimpleActions)({
+    const Thunks = createThunks(SimpleActions, {
         myThunk(boo: number) {
             return async dispatch => {
                 // assert return value here too
@@ -109,7 +109,7 @@ test("thunks can call other thunks", async () => {
         },
     });
 
-    const Thunks = createThunks(SimpleActions)({
+    const Thunks = createThunks(SimpleActions, {
         myThunk(boo: number) {
             return async (dispatch, getState) => {
                 dispatch(SimpleActions.creators.setFoo({foo: "first"}));
