@@ -99,7 +99,7 @@ const Thunks = createThunks(SimpleActions, {
         return (dispatch, getState) => {
             dispatch(
                 // Generated Action Creators are available in SimpleActions.creators.
-                SimpleActions.creators.setCound({newCount: Math.random()}),
+                SimpleActions.creators.setCount({newCount: Math.random()}),
             );
         };
     },
@@ -114,7 +114,7 @@ const Thunks = createThunks(SimpleActions, {
             const response = request(API_URL);
 
             dispatch(
-                SimpleActions.creators.setCound({
+                SimpleActions.creators.setCount({
                     newCount: response.body.count,
                 }),
             );
@@ -132,7 +132,7 @@ const Thunks = createThunks(SimpleActions, {
 
             // and after that double it
             dispatch(
-                SimpleActions.creators.setCound({
+                SimpleActions.creators.setCount({
                     newCount: getState().count * 2,
                 }),
             );
