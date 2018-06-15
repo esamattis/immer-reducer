@@ -41,7 +41,7 @@ This is originally forked from [wkrueger/redutser][redutser]. Huge props for cre
 
 ### `createThunks()`
 
-This is an no-op function for creating typed object of thunk actions.
+Create thunks from simple actions for side effects (api calls etc.).
 
 ## Usage example
 
@@ -88,12 +88,9 @@ const SimpleActions = createSimpleActions(initialState, {
 });
 
 /**
- * This API is bit weird due to TS limitations but 3.0 should allow this
- * to be much simpler.
- *
- * The generated Action Types are available in SimpleAction.types
+ * createThunks() infers state type and action types from SimpleActions
  */
-const Thunks = createThunks<State, typeof SimpleActions.types>()({
+const Thunks = createThunks(SimpleActions, {
     /**
      * Side effects should be created in thunks.
      * For example calling random() is a side effect.
