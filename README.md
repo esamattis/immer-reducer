@@ -111,7 +111,7 @@ const Thunks = createThunks(SimpleActions, {
      */
     fetchCount() {
         return async (dispatch, getState) => {
-            const response = request(API_URL);
+            const response = await request(API_URL);
 
             dispatch(
                 SimpleActions.creators.setCount({
