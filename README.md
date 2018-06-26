@@ -50,6 +50,7 @@ import {
     createSimpleActions,
     createThunks,
     configureStore,
+    REDUCER,
 } from "@epeli/redux-stack";
 
 /**
@@ -97,10 +98,7 @@ const Thunks = createThunks(SimpleActions, {
      */
     setRandomCount() {
         return (dispatch, getState) => {
-            dispatch(
-                // Generated Action Creators are available in SimpleActions.creators.
-                SimpleActions.creators.setCount({newCount: Math.random()}),
-            );
+            dispatch(SimpleActions.setCount({newCount: Math.random()}));
         };
     },
 
@@ -114,7 +112,7 @@ const Thunks = createThunks(SimpleActions, {
             const response = await request(API_URL);
 
             dispatch(
-                SimpleActions.creators.setCount({
+                SimpleActions.setCount({
                     newCount: response.body.count,
                 }),
             );
@@ -132,7 +130,7 @@ const Thunks = createThunks(SimpleActions, {
 
             // and after that double it
             dispatch(
-                SimpleActions.creators.setCount({
+                SimpleActions.setCount({
                     newCount: getState().count * 2,
                 }),
             );
@@ -143,8 +141,8 @@ const Thunks = createThunks(SimpleActions, {
 const store = configureStore({
     // reducers option takes an array of reducers which all receive the same state object.
     reducers: [
-        // The generated reducer is available in .reducer
-        SimpleActions.reducer,
+        // The generated reducer is available in REDUCER symbol
+        SimpleActions[REDUCER]
 
         // If you need to keep your old reducers still around
         oldReducer,
@@ -161,7 +159,7 @@ const store = configureStore({
 import {makeCreator} from "redux-render-prop";
 import {bindActionCreators} from "redux";
 
-const AllActions = {...SimpleActions.creators, ...Thunks};
+const AllActions = {...SimpleActions, ...Thunks};
 
 export const createMyAppComponent = makeCreator({
     prepareState: (state: State) => state,

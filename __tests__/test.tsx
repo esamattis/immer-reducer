@@ -2,7 +2,7 @@ import React from "react";
 import {Provider} from "react-redux";
 
 import {createThunks} from "../src/create-thunks";
-import {createSimpleActions} from "../src/create-simple-actions";
+import {createSimpleActions, REDUCER} from "../src/create-simple-actions";
 import {configureStore} from "../src/configure-store";
 
 const wait = (t: number) => new Promise(r => setTimeout(r, t));
@@ -17,10 +17,10 @@ test("can create reducers", () => {
     });
 
     const store = configureStore({
-        reducer: SimpleActions.reducer,
+        reducer: SimpleActions[REDUCER],
     });
 
-    store.dispatch(SimpleActions.creators.setFoo({foo: "next"}));
+    store.dispatch(SimpleActions.setFoo({foo: "next"}));
 
     expect(store.getState()).toEqual({foo: "next"});
 });
@@ -36,10 +36,10 @@ test("reducers use immer", () => {
     });
 
     const store = configureStore({
-        reducer: SimpleActions.reducer,
+        reducer: SimpleActions[REDUCER],
     });
 
-    store.dispatch(SimpleActions.creators.setFoo({foo: "next"}));
+    store.dispatch(SimpleActions.setFoo({foo: "next"}));
 
     // no mutation
     expect(initialState.nest.foo).toEqual("initial");
@@ -62,10 +62,10 @@ test("can call other reducers", () => {
     });
 
     const store = configureStore({
-        reducer: SimpleActions.reducer,
+        reducer: SimpleActions[REDUCER],
     });
 
-    store.dispatch(SimpleActions.creators.setFoo({foo: "next"}));
+    store.dispatch(SimpleActions.setFoo({foo: "next"}));
 
     expect(store.getState()).toEqual({foo: "nextBAR"});
 });
@@ -84,14 +84,14 @@ test("thunks work", () => {
             return async dispatch => {
                 // assert return value here too
                 const res: Promise<null> | void = dispatch(
-                    SimpleActions.creators.setFoo({foo: "from thunk"}),
+                    SimpleActions.setFoo({foo: "from thunk"}),
                 );
             };
         },
     });
 
     const store = configureStore({
-        reducer: SimpleActions.reducer,
+        reducer: SimpleActions[REDUCER],
     });
 
     store.dispatch(Thunks.myThunk(3) as any);
@@ -112,7 +112,7 @@ test("thunks can call other thunks", async () => {
     const Thunks = createThunks(SimpleActions, {
         myThunk(boo: number) {
             return async (dispatch, getState) => {
-                dispatch(SimpleActions.creators.setFoo({foo: "first"}));
+                dispatch(SimpleActions.setFoo({foo: "first"}));
                 thunkSpy();
                 await dispatch(this.slowThunk());
             };
@@ -122,13 +122,13 @@ test("thunks can call other thunks", async () => {
             return async dispatch => {
                 await wait(50);
                 thunkSpy();
-                dispatch(SimpleActions.creators.setFoo({foo: "slow"}));
+                dispatch(SimpleActions.setFoo({foo: "slow"}));
             };
         },
     });
 
     const store = configureStore({
-        reducer: SimpleActions.reducer,
+        reducer: SimpleActions[REDUCER],
     });
     store.dispatch(Thunks.myThunk(3));
 

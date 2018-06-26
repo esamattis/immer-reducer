@@ -1,3 +1,5 @@
+import {STATE, TYPES} from "./create-simple-actions";
+
 export interface Thunk<State, ActionTypes> {
     (
         dispatch: (
@@ -15,8 +17,8 @@ export function createThunks<
     }
 >(
     options: {
-        initialState: State;
-        types: ActionTypes;
+        [STATE]: State;
+        [TYPES]: ActionTypes;
     },
     thunks: ThunkDict,
 ) {

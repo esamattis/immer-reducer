@@ -4,6 +4,10 @@
 
 import produce from "immer";
 
+export const STATE = Symbol("initialState");
+export const REDUCER = Symbol("reducer");
+export const TYPES = Symbol("types");
+
 type SecondArg<T> = T extends (x: any, y: infer V) => any ? V : never;
 type Values<K> = K[keyof K];
 
@@ -41,14 +45,11 @@ export const createSimpleActions = <State, Dict extends ReducerDict<State>>(
         return state;
     }
 
-    return {
-        creators,
-        reducer,
-        initialState,
-        types: (undefined as any) as ActionTypesFromReducerDict<Dict>,
-        __redutser__: true,
-        _reducerDict: reducerDict,
-    };
+    return Object.assign({}, creators, {
+        [REDUCER]: reducer,
+        [STATE]: initialState,
+        [TYPES]: (undefined as any) as ActionTypesFromReducerDict<Dict>,
+    });
 };
 
 function _actionCreatorsFromReducerDict() {
