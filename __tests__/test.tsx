@@ -2,7 +2,7 @@ import React from "react";
 import {Provider} from "react-redux";
 
 import {createThunks} from "../src/create-thunks";
-import {createSimpleActions, getReducer} from "../src/create-simple-actions";
+import {createSimpleActions, createReducer} from "../src/create-simple-actions";
 import {configureStore} from "../src/configure-store";
 
 const wait = (t: number) => new Promise(r => setTimeout(r, t));
@@ -17,7 +17,7 @@ test("can create reducers", () => {
     });
 
     const store = configureStore({
-        reducer: getReducer(SimpleActions),
+        reducer: createReducer(SimpleActions),
     });
 
     store.dispatch(SimpleActions.setFoo({foo: "next"}));
@@ -36,7 +36,7 @@ test("reducers use immer", () => {
     });
 
     const store = configureStore({
-        reducer: getReducer(SimpleActions),
+        reducer: createReducer(SimpleActions),
     });
 
     store.dispatch(SimpleActions.setFoo({foo: "next"}));
@@ -62,7 +62,7 @@ test("can call other reducers", () => {
     });
 
     const store = configureStore({
-        reducer: getReducer(SimpleActions),
+        reducer: createReducer(SimpleActions),
     });
 
     store.dispatch(SimpleActions.setFoo({foo: "next"}));
@@ -91,7 +91,7 @@ test("thunks work", () => {
     });
 
     const store = configureStore({
-        reducer: getReducer(SimpleActions),
+        reducer: createReducer(SimpleActions),
     });
 
     store.dispatch(Thunks.myThunk(3) as any);
@@ -128,7 +128,7 @@ test("thunks can call other thunks", async () => {
     });
 
     const store = configureStore({
-        reducer: getReducer(SimpleActions),
+        reducer: createReducer(SimpleActions),
     });
     store.dispatch(Thunks.myThunk(3));
 
