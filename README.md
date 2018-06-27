@@ -41,14 +41,14 @@ This is originally forked from [wkrueger/redutser][redutser]. Huge props for cre
 
 The options can have following keys:
 
--   `immer: boolean`: Set false to disable immer usage
+-   `immer: boolean`: Set `false` to disable immer usage
 -   `actionTypePrefix: string`: Custom prefix for the generated actions types
 
 ### `createReducer(actions: SimpleActions)`
 
 Create reducer from simple actions for the redux store
 
-### `createThunks(actions: SimpleActions)`
+### `createThunks(actions: SimpleActions, thunks: Object)`
 
 Create thunks from simple actions for side effects (api calls etc.).
 
