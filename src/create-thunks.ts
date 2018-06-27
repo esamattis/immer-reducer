@@ -21,6 +21,6 @@ export function createThunks<
             ...args: any[]
         ) => Thunk<State, ActionTypesFromSimpleActions<Actions>>;
     }
->(options: SimpleActionsMeta<State, Actions>, thunks: ThunkActions) {
+>(actions: SimpleActionsMeta<State, Actions>, thunks: ThunkActions) {
     return thunks;
 }
