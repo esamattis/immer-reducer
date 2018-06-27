@@ -34,7 +34,7 @@ export function configureStore<State>(options: {
     reducers?: (MyReducer<State>)[];
     middleware?: any[];
     devTools?: boolean;
-    preloadedState?: DeepPartial<State>;
+    preloadedState?: State;
     enhancers?: any[];
 }) {
     const {
