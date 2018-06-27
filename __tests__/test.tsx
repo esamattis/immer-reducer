@@ -60,20 +60,24 @@ test("reducers use immer", () => {
 test("can disable immer", () => {
     const initialState = {nest: {foo: "initial"}};
 
-    const SimpleActions = createSimpleActions(initialState, {
-        setFoo(state, action: {foo: string}) {
-            state.nest.foo = action.foo;
-            return state;
+    const SimpleActions = createSimpleActions(
+        initialState,
+        {
+            setFoo(state, action: {foo: string}) {
+                state.nest.foo = action.foo;
+                return state;
+            },
         },
-    });
+        {immer: false},
+    );
 
     const store = configureStore({
-        reducer: createReducer(SimpleActions, {immer: false}),
+        reducer: createReducer(SimpleActions),
     });
 
     store.dispatch(SimpleActions.setFoo({foo: "next"}));
 
-    // no mutation
+    // YES mutation!
     expect(initialState.nest).toBe(store.getState().nest);
 });
 

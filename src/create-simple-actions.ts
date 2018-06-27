@@ -21,6 +21,7 @@ export interface SimpleActionsMeta<State, Actions> {
     [SIMPLE_ACTIONS_META]: {
         initialState: State;
         actions: Actions;
+        immer: boolean;
     };
 }
 
@@ -36,21 +37,32 @@ export type ActionTypesFromSimpleActions<
     Inp extends SimpleActionsObject<any>
 > = ReturnType<Values<ActionCreatorsFromSimpleActions<Inp>>>;
 
+interface CreateSimpleActionsOptions {
+    /**
+     * Set to false to disable Immer usage
+     * https://github.com/mweststrate/immer
+     */
+    immer?: boolean;
+}
+
 export const createSimpleActions = <
     State,
     Actions extends SimpleActionsObject<State>
 >(
     initialState: State,
     actions: Actions,
+    options?: CreateSimpleActionsOptions,
 ) => {
     const creators = createActionCreators()(actions);
 
-    return Object.assign(creators, {
+    const meta: SimpleActionsMeta<State, Actions> = {
         [SIMPLE_ACTIONS_META]: {
             initialState,
             actions,
+            immer: options ? Boolean(options.immer) : true,
         },
-    });
+    };
+    return Object.assign(creators, meta);
 };
 
 function createActionCreators() {
@@ -67,13 +79,7 @@ function createActionCreators() {
     };
 }
 
-interface CreateReducerOptions {
-    /**
-     * Set to false to disable Immer usage
-     * https://github.com/mweststrate/immer
-     */
-    immer?: boolean;
-}
+interface CreateReducerOptions {}
 
 /**
  * Create reducer function for Redux store
@@ -95,7 +101,7 @@ export function createReducer<
             return state;
         }
 
-        if (options && options.immer === false) {
+        if (meta.immer === false) {
             return actionFn.call(meta.actions, state, action.payload);
         }
 
