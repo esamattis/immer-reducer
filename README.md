@@ -39,6 +39,10 @@ This is originally forked from [wkrueger/redutser][redutser]. Huge props for cre
 
 [redutser]: https://github.com/wkrueger/redutser
 
+### `createReducer()`
+
+Create reducer from simple actions for the redux store
+
 ### `createThunks()`
 
 Create thunks from simple actions for side effects (api calls etc.).
@@ -48,9 +52,9 @@ Create thunks from simple actions for side effects (api calls etc.).
 ```tsx
 import {
     createSimpleActions,
+    createReducer,
     createThunks,
     configureStore,
-    getReducer,
 } from "@epeli/redux-stack";
 
 /**
@@ -141,8 +145,8 @@ const Thunks = createThunks(SimpleActions, {
 const store = configureStore({
     // reducers option takes an array of reducers which all receive the same state object.
     reducers: [
-        // Use the getReducer function to get the generated reducer
-        getReducer(SimpleActions),
+        // Create reducer from the simple actions
+        createReducer(SimpleActions),
 
         // If you need to keep your old reducers still around
         oldReducer,
