@@ -1,7 +1,7 @@
 import {
     META,
-    ActionTypesFromReducerDict,
-    ReducerDict,
+    ActionTypesFromSimpleActions,
+    SimpleActionsObject,
 } from "./create-simple-actions";
 
 export interface Thunk<State, ActionTypes> {
@@ -15,20 +15,20 @@ export interface Thunk<State, ActionTypes> {
 
 export function createThunks<
     State,
-    Dict extends ReducerDict<State>,
-    ThunkDict extends {
+    Actions extends SimpleActionsObject<State>,
+    ThunkActions extends {
         [thunk: string]: (
             ...args: any[]
-        ) => Thunk<State, ActionTypesFromReducerDict<Dict>>;
+        ) => Thunk<State, ActionTypesFromSimpleActions<Actions>>;
     }
 >(
     options: {
         [META]: {
             initialState: State;
-            reducerDict: Dict;
+            actions: Actions;
         };
     },
-    thunks: ThunkDict,
+    thunks: ThunkActions,
 ) {
     return thunks;
 }
