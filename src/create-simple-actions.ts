@@ -5,6 +5,7 @@
 import produce from "immer";
 
 export const SIMPLE_ACTIONS_META = Symbol("SIMPLE_ACTIONS_META");
+export const NO_MANUAL = Symbol("NO_MANUAL");
 const DEFAULT_PREFIX = "SIMPLE_ACTION";
 
 type SecondArg<T> = T extends (x: any, y: infer V) => any ? V : never;
@@ -32,7 +33,13 @@ export type ActionCreatorsFromSimpleActions<
 > = {
     [K in keyof Actions]: (
         payload: SecondArg<Actions[K]>,
-    ) => {type: K; payload: SecondArg<Actions[K]>}
+    ) => {
+        type: K;
+        payload: SecondArg<Actions[K]>;
+
+        // This makes it impossible to create actions objects manually
+        [NO_MANUAL]: "do not create action objects manually";
+    }
 };
 
 export type ActionTypesFromSimpleActions<

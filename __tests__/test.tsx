@@ -175,6 +175,20 @@ test("thunks work", () => {
                 const res: Promise<null> | void = dispatch(
                     SimpleActions.setFoo({foo: "from thunk"}),
                 );
+
+                // just for type assertions
+                const fakeDispatch: typeof dispatch = (() => null) as any;
+
+                // These must fail
+
+                // @ts-ignore
+                fakeDispatch({type: "setFoo", payload: {foo: "from thunk"}});
+
+                // @ts-ignore
+                fakeDispatch({});
+
+                // @ts-ignore
+                fakeDispatch();
             };
         },
     });
