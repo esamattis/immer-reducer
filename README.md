@@ -50,7 +50,7 @@ This is originally forked from [wkrueger/redutser][redutser]. Huge props for cre
 
 options:
 
--   `immer: boolean`: Set `false` to disable immer usage
+-   `immer: boolean`: Set to `false` to disable immer usage
 -   `actionTypePrefix: string`: Custom prefix for the generated actions types
 
 ### `createReducer(actions: SimpleActions)`
