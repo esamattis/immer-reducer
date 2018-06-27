@@ -13,6 +13,12 @@ export interface Thunk<State, ActionTypes> {
     ): any;
 }
 
+/**
+ * Create thunk actions for side effects etc.
+ *
+ * @param actions actions object returned by createSimpleActions()
+ * @param thunks
+ */
 export function createThunks<
     State,
     Actions extends SimpleActionsObject<State>,
