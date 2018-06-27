@@ -1,7 +1,7 @@
 import {
-    META,
     ActionTypesFromSimpleActions,
     SimpleActionsObject,
+    SimpleActionsMeta,
 } from "./create-simple-actions";
 
 export interface Thunk<State, ActionTypes> {
@@ -21,14 +21,6 @@ export function createThunks<
             ...args: any[]
         ) => Thunk<State, ActionTypesFromSimpleActions<Actions>>;
     }
->(
-    options: {
-        [META]: {
-            initialState: State;
-            actions: Actions;
-        };
-    },
-    thunks: ThunkActions,
-) {
+>(options: SimpleActionsMeta<State, Actions>, thunks: ThunkActions) {
     return thunks;
 }

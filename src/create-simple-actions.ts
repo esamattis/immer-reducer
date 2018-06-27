@@ -17,6 +17,13 @@ export interface SimpleActionsObject<State> {
     ) => State;
 }
 
+export interface SimpleActionsMeta<State, Actions> {
+    [META]: {
+        initialState: State;
+        actions: Actions;
+    };
+}
+
 export type ActionCreatorsFromSimpleActions<
     Actions extends SimpleActionsObject<any>
 > = {
@@ -66,7 +73,7 @@ function createActionCreators() {
 export function createReducer<
     State,
     Actions extends SimpleActionsObject<State>
->(actions: {[META]: {initialState: State; actions: Actions}}) {
+>(actions: SimpleActionsMeta<State, Actions>) {
     const meta = actions[META];
 
     return function reducer(
