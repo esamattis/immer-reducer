@@ -16,8 +16,17 @@ test("can create reducers", () => {
         },
     });
 
+    const reducer = createReducer(SimpleActions);
+
+    // just some type tests
+    reducer(initialState, SimpleActions.setFoo({foo: "typetest"}));
+    reducer(initialState, {type: "setFoo", payload: {foo: "test"}});
+    // this must fail
+    // @ts-ignore
+    reducer(initialState, {type: "setFoofail", payload: {foo: "test"}});
+
     const store = configureStore({
-        reducer: createReducer(SimpleActions),
+        reducer,
     });
 
     store.dispatch(SimpleActions.setFoo({foo: "next"}));
