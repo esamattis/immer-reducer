@@ -4,7 +4,7 @@
 
 import produce from "immer";
 
-export const META = Symbol("META");
+export const SIMPLE_ACTIONS_META = Symbol("SIMPLE_ACTIONS_META");
 
 type SecondArg<T> = T extends (x: any, y: infer V) => any ? V : never;
 type Values<K> = K[keyof K];
@@ -18,7 +18,7 @@ export interface SimpleActionsObject<State> {
 }
 
 export interface SimpleActionsMeta<State, Actions> {
-    [META]: {
+    [SIMPLE_ACTIONS_META]: {
         initialState: State;
         actions: Actions;
     };
@@ -46,7 +46,7 @@ export const createSimpleActions = <
     const creators = createActionCreators()(actions);
 
     return Object.assign(creators, {
-        [META]: {
+        [SIMPLE_ACTIONS_META]: {
             initialState,
             actions,
         },
@@ -74,7 +74,7 @@ export function createReducer<
     State,
     Actions extends SimpleActionsObject<State>
 >(actions: SimpleActionsMeta<State, Actions>) {
-    const meta = actions[META];
+    const meta = actions[SIMPLE_ACTIONS_META];
 
     return function reducer(
         state = meta.initialState,
