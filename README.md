@@ -29,6 +29,15 @@ Simplifies store creation. Adds redux-thunk middleware and creates devtools conn
 
 [starter]: https://github.com/markerikson/redux-starter-kit
 
+options:
+
+-   `reducer?: Reducer`: Single reducer
+-   `reducers?: Reducer[]`: Multiple reducers for the same state
+-   `middleware?: Middleware[]`: Redux middlewares. By default add redux-thunk
+-   `devTools?: boolean`: Enables or disables redux-devtools. By default is enabled
+-   `preloadedState?: State`: Preload store with a state
+-   `enhancers?: Enhancers[]`: Redux enhancers
+
 ### `createSimpleActions(actions: Object, options?: Object): SimpleActions`
 
 Create action types, action creators and reducers in one go. Immutable updates are made type safe and terse with [Immer][].
@@ -39,7 +48,7 @@ This is originally forked from [wkrueger/redutser][redutser]. Huge props for cre
 
 [redutser]: https://github.com/wkrueger/redutser
 
-The options can have following keys:
+options:
 
 -   `immer: boolean`: Set `false` to disable immer usage
 -   `actionTypePrefix: string`: Custom prefix for the generated actions types
