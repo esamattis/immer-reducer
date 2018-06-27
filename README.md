@@ -50,7 +50,7 @@ import {
     createSimpleActions,
     createThunks,
     configureStore,
-    REDUCER,
+    getReducer,
 } from "@epeli/redux-stack";
 
 /**
@@ -141,8 +141,8 @@ const Thunks = createThunks(SimpleActions, {
 const store = configureStore({
     // reducers option takes an array of reducers which all receive the same state object.
     reducers: [
-        // The generated reducer is available in REDUCER symbol
-        SimpleActions[REDUCER]
+        // Use the getReducer function to get the generated reducer
+        getReducer(SimpleActions),
 
         // If you need to keep your old reducers still around
         oldReducer,
