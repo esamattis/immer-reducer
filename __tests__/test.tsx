@@ -34,6 +34,62 @@ test("can create reducers", () => {
     expect(store.getState()).toEqual({foo: "next"});
 });
 
+test("action type name", () => {
+    const initialState = {foo: "bar"};
+
+    const SimpleActions = createSimpleActions(initialState, {
+        setFoo(state, action: {foo: string}) {
+            return {...state, foo: action.foo};
+        },
+    });
+
+    const reducer = jest.fn(createReducer(SimpleActions));
+
+    const store = configureStore({
+        reducer,
+    });
+
+    store.dispatch(SimpleActions.setFoo({foo: "next"}));
+
+    expect(reducer).toHaveBeenLastCalledWith(
+        {foo: "bar"},
+        {
+            payload: {foo: "next"},
+            type: "SIMPLE_ACTION:setFoo",
+        },
+    );
+});
+
+test("allow custom action type name", () => {
+    const initialState = {foo: "bar"};
+
+    const SimpleActions = createSimpleActions(
+        initialState,
+        {
+            setFoo(state, action: {foo: string}) {
+                return {...state, foo: action.foo};
+            },
+        },
+        {actionTypePrefix: "MY"},
+    );
+
+    const reducer = jest.fn(createReducer(SimpleActions));
+
+    const store = configureStore({
+        reducer,
+    });
+
+    store.dispatch(SimpleActions.setFoo({foo: "next"}));
+
+    expect(reducer).toHaveBeenLastCalledWith(
+        {foo: "bar"},
+        {
+            payload: {foo: "next"},
+            type: "MY:setFoo",
+        },
+    );
+});
+
 test("reducers use immer", () => {
     const initialState = {nest: {foo: "initial"}};
 

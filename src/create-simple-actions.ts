@@ -5,6 +5,7 @@
 import produce from "immer";
 
 export const SIMPLE_ACTIONS_META = Symbol("SIMPLE_ACTIONS_META");
+const DEFAULT_PREFIX = "SIMPLE_ACTION";
 
 type SecondArg<T> = T extends (x: any, y: infer V) => any ? V : never;
 type Values<K> = K[keyof K];
@@ -22,6 +23,7 @@ export interface SimpleActionsMeta<State, Actions> {
         initialState: State;
         actions: Actions;
         immer: boolean;
+        prefix: string;
     };
 }
 
@@ -43,6 +45,18 @@ interface CreateSimpleActionsOptions {
      * https://github.com/mweststrate/immer
      */
     immer?: boolean;
+
+    /**
+     * action type prefix
+     */
+    actionTypePrefix?: string;
+}
+
+function removePrefix(actionType: string) {
+    return actionType
+        .split(":")
+        .slice(1)
+        .join(":");
 }
 
 export const createSimpleActions = <
@@ -53,26 +67,32 @@ export const createSimpleActions = <
     actions: Actions,
     options?: CreateSimpleActionsOptions,
 ) => {
-    const creators = createActionCreators()(actions);
-
     const meta: SimpleActionsMeta<State, Actions> = {
         [SIMPLE_ACTIONS_META]: {
             initialState,
             actions,
+            prefix: options
+                ? options.actionTypePrefix || DEFAULT_PREFIX
+                : DEFAULT_PREFIX,
             immer: options ? Boolean(options.immer) : true,
         },
     };
+
+    const creators = createActionCreators(meta[SIMPLE_ACTIONS_META].prefix)(
+        actions,
+    );
+
     return Object.assign(creators, meta);
 };
 
-function createActionCreators() {
+function createActionCreators(prefix: string) {
     return <D extends SimpleActionsObject<any>>(
         dict: D,
     ): ActionCreatorsFromSimpleActions<D> => {
         return Object.keys(dict).reduce(
             (out, name) => ({
                 ...out,
-                [name]: (i: any) => ({type: name, payload: i}),
+                [name]: (i: any) => ({type: prefix + ":" + name, payload: i}),
             }),
             {},
         ) as any;
@@ -96,7 +116,14 @@ export function createReducer<
         state = meta.initialState,
         action: ActionTypesFromSimpleActions<Actions>,
     ): State {
-        const actionFn = meta.actions[action.type];
+        const type: string = action.type;
+
+        if (!type.startsWith(meta.prefix + ":")) {
+            return state;
+        }
+
+        const actionFn = meta.actions[removePrefix(type)];
+
         if (!actionFn) {
             return state;
         }
