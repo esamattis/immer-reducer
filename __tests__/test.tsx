@@ -291,3 +291,44 @@ test("can compose multiple reducers", () => {
     expect(reducerSpy2).toHaveBeenCalledTimes(1);
     expect(store.getState()).toEqual({bar: "reducer2", foo: "reducer1"});
 });
+
+test("can combine multiple simple action reducers", () => {
+    const initialState = {foo: {ding: 1}, bar: {dong: 2}, other: ""};
+
+    const FooSimpleActions = createSimpleActions(initialState.foo, {
+        setFoo(draftState, action: {foo: number}) {
+            draftState.ding = action.foo;
+            return draftState;
+        },
+    });
+
+    const BarSimpleActions = createSimpleActions(initialState.bar, {
+        setBar(draftState, action: {bar: number}) {
+            draftState.dong = action.bar;
+            return draftState;
+        },
+    });
+
+    const fooReducer = createReducer(FooSimpleActions);
+    const barReducer = createReducer(BarSimpleActions);
+
+    const store = configureStore({
+        preloadedState: initialState,
+        reducer: (state, action: any) => {
+            return {
+                ...state,
+                foo: fooReducer(state.foo, action),
+                bar: barReducer(state.bar, action),
+            };
+        },
+    });
+
+    store.dispatch(FooSimpleActions.setFoo({foo: 6}));
+    store.dispatch(BarSimpleActions.setBar({bar: 7}));
+
+    expect(store.getState()).toEqual({
+        bar: {dong: 7},
+        foo: {ding: 6},
+        other: "",
+    });
+});
