@@ -67,6 +67,14 @@ function createActionCreators() {
     };
 }
 
+interface CreateReducerOptions {
+    /**
+     * Set to false to disable Immer usage
+     * https://github.com/mweststrate/immer
+     */
+    immer?: boolean;
+}
+
 /**
  * Create reducer function for Redux store
  *
@@ -75,18 +83,24 @@ function createActionCreators() {
 export function createReducer<
     State,
     Actions extends SimpleActionsObject<State>
->(actions: SimpleActionsMeta<State, Actions>) {
+>(actions: SimpleActionsMeta<State, Actions>, options?: CreateReducerOptions) {
     const meta = actions[SIMPLE_ACTIONS_META];
 
     return function reducer(
         state = meta.initialState,
         action: ActionTypesFromSimpleActions<Actions>,
     ): State {
-        if (meta.actions[action.type]) {
-            return produce(state, draftState => {
-                return meta.actions[action.type](draftState, action.payload);
-            });
+        const actionFn = meta.actions[action.type];
+        if (!actionFn) {
+            return state;
         }
-        return state;
+
+        if (options && options.immer === false) {
+            return actionFn.call(meta.actions, state, action.payload);
+        }
+
+        return produce(state, draftState => {
+            return actionFn.call(meta.actions, draftState, action.payload);
+        });
     };
 }
