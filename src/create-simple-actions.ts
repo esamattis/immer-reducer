@@ -89,7 +89,13 @@ export const createSimpleActions = <
         actions,
     );
 
-    return Object.assign(creators, meta);
+    const out = Object.assign(creators, meta);
+
+    // For some reason it seems that the Object.assing()
+    // in react-native does not copy symbol based keys.
+    out[SIMPLE_ACTIONS_META] = meta[SIMPLE_ACTIONS_META];
+
+    return out;
 };
 
 function createActionCreators(prefix: string) {
