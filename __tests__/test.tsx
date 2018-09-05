@@ -135,7 +135,7 @@ test("can disable immer", () => {
     store.dispatch(SimpleActions.setFoo({foo: "next"}));
 
     // YES mutation!
-    expect(initialState.nest).toBe(store.getState().nest);
+    expect(initialState.nest).toBe(store.getState()!.nest);
 });
 
 test("can call other reducers", () => {
