@@ -1,12 +1,25 @@
-// Forked from https://github.com/markerikson/redux-starter-kit/blob/2f7f1e0dce166f25ae7ec70a6460587ddd0cef80/src/configureStore.js
+// Originally forked from https://github.com/markerikson/redux-starter-kit/blob/2f7f1e0dce166f25ae7ec70a6460587ddd0cef80/src/configureStore.js
 // TODO typing suck here a bit
 import {createStore, compose, applyMiddleware, Store} from "redux";
-import thunk from "redux-thunk";
 
 const {composeWithDevTools} = require("redux-devtools-extension");
 
+/**
+ * Our own redux-thunk implementation. It's so simple and there's
+ * no need to add extra dependency for it.
+ */
+const thunkMiddleware = ({dispatch, getState}: Store) => (
+    next: (action: any) => any,
+) => (action: unknown) => {
+    if (typeof action === "function") {
+        return action(dispatch, getState);
+    }
+
+    return next(action);
+};
+
 export function getDefaultMiddleware() {
-    return [thunk];
+    return [thunkMiddleware];
 }
 
 interface MyReducer<State> {
