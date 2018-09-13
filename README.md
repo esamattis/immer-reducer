@@ -11,11 +11,9 @@ If you happen to work with me, you're in luck because you are now working with s
 
 ## Install
 
-    npm install @epeli/redux-stack
+Install with redux (it's a peer dep)
 
-And you will need the React and Redux stuff
-
-    npm install redux react-redux react @types/react @types/react @types/react-redux
+    npm install @epeli/redux-stack redux
 
 ## Exported functions
 

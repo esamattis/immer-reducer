@@ -27,9 +27,11 @@
         "react-dom": "^16.5.0",
         "react-redux": "^5.0.7",
         "react-testing-library": "^5.0.1",
-        "redux": "^4.0.0",
         "ts-jest": "^23.1.4",
         "typescript": "~3.0.3"
+    },
+    "peerDependencies": {
+        "redux": "^4.0.0"
     },
     "dependencies": {
         "immer": "^1.6.0"
