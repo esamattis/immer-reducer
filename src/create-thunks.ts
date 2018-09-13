@@ -10,28 +10,24 @@ interface GetState {
     (): unknown;
 }
 
-type OnlyPromise<T> = T extends (...args: any[]) => Promise<any>
-    ? Promise<void>
-    : void;
-
-function isPromise(o: any): o is Promise<void> {
-    return Boolean(o && typeof o.then === "function");
-}
+type OnlyPromise<T> = T extends (...args: any[]) => Promise<infer R>
+    ? Promise<R>
+    : T extends (...args: any[]) => infer R ? R : void;
 
 class SimpleStore {
-    _dispatch: ReduxDispatch;
+    private _reduxDispatch: ReduxDispatch;
     getState: GetState;
 
     constructor(dispatch: ReduxDispatch, getState: GetState) {
-        this._dispatch = dispatch;
+        this._reduxDispatch = dispatch;
         this.getState = getState;
         this.dispatch = this.dispatch.bind(this);
     }
 
     dispatch<T extends Function | Action>(action: T): OnlyPromise<T> {
-        const ret = this._dispatch(action);
+        const ret = this._reduxDispatch(action);
 
-        if (isPromise(ret)) {
+        if (typeof action === "function") {
             return ret as any;
         }
 
@@ -42,10 +38,7 @@ class SimpleStore {
 export function makeThunkCreator<MappedStore>(
     mapStore: (store: SimpleStore) => MappedStore,
 ) {
-    function createThunk<
-        ThunkArg extends any[],
-        ThunkReturn extends Promise<any> | void
-    >(
+    function createThunk<ThunkArg extends any[], ThunkReturn>(
         thunk: (...args: ThunkArg) => (arg: MappedStore) => ThunkReturn,
     ): (
         ...args: ThunkArg

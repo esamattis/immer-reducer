@@ -97,10 +97,14 @@ test("thunk dispatch returns correct types", async () => {
 
     const aThunk = createThunk(() => store => {
         store.dispatch(SimpleActions.simple({foo: "slow"}));
+
+        return "str";
     });
 
     const asyncThunk = createThunk(() => async store => {
         await wait(1);
+
+        return 3;
     });
 
     const testThunk = createThunk(() => {
@@ -110,12 +114,16 @@ test("thunk dispatch returns correct types", async () => {
             );
             expect(simpleRet).toBe(undefined);
 
-            const thunkDispatchRet: void = store.dispatch(aThunk());
-            expect(thunkDispatchRet).toBe(undefined);
+            const thunkDispatchRet: string = store.dispatch(aThunk());
+            expect(thunkDispatchRet).toBe("str");
 
-            const asyncDispatchRet: Promise<void> = store.dispatch(
+            const asyncDispatchRet: Promise<number> = store.dispatch(
                 asyncThunk(),
             );
+
+            const value: number = await asyncDispatchRet;
+            expect(value).toBe(3);
+
             expect(typeof asyncDispatchRet.then).toBe("function");
 
             thunkSpy();
