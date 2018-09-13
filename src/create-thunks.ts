@@ -1,4 +1,4 @@
-interface Action {
+interface ReduxAction {
     type: string;
 }
 
@@ -10,9 +10,13 @@ interface GetState {
     (): unknown;
 }
 
-type OnlyPromise<T> = T extends (...args: any[]) => Promise<infer R>
-    ? Promise<R>
-    : T extends (...args: any[]) => infer R ? R : void;
+/**
+ * For functions return its return type otherwise return void.
+ *
+ * Different from the core ReturnType which can oly be called for
+ * functions.
+ */
+type FunctionReturnValue<T> = T extends (...args: any[]) => infer R ? R : void;
 
 class SimpleStore {
     private _reduxDispatch: ReduxDispatch;
@@ -24,7 +28,9 @@ class SimpleStore {
         this.dispatch = this.dispatch.bind(this);
     }
 
-    dispatch<T extends Function | Action>(action: T): OnlyPromise<T> {
+    dispatch<T extends Function | ReduxAction>(
+        action: T,
+    ): FunctionReturnValue<T> {
         const ret = this._reduxDispatch(action);
 
         if (typeof action === "function") {
