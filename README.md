@@ -57,7 +57,7 @@ options:
 
 Create reducer from simple actions for the redux store
 
-### `createThunks(actions: SimpleActions, thunks: Object)`
+### `makeThunkCreator(mapStore: Function)`
 
 Create thunks from simple actions for side effects (api calls etc.).
 
@@ -67,8 +67,7 @@ Create thunks from simple actions for side effects (api calls etc.).
 import {
     createSimpleActions,
     createReducer,
-    createThunks,
-    configureStore,
+    makeThunkCreator,
 } from "@epeli/redux-stack";
 
 /**
@@ -107,54 +106,68 @@ const SimpleActions = createSimpleActions(initialState, {
 });
 
 /**
- * createThunks() infers state type and action types from SimpleActions
+ * Make typed thunk creator.
+ * Usually you only need to create one of these per app.
+ *
+ * You decorate the store passed to the thunks in any
+ * way you wish. The types will be inferred automatically
+ * for it.
  */
-const Thunks = createThunks(SimpleActions, {
+const createThunk = makeThunkCreator(store => ({
+    // Here we just add our state type to getState
+    getState: () => store.getState() as typeof initialState,
+    dispatch: store.dispatch,
+}));
+
+const Thunks = {
     /**
      * Side effects should be created in thunks.
      * For example calling random() is a side effect.
+     *
+     * Type of setRandomCount will be
+     *
+     *  (base: number) => (reduxDispatch: Dispatch, getState: GetState) => void
      */
-    setRandomCount() {
-        return (dispatch, getState) => {
-            dispatch(SimpleActions.setCount({newCount: Math.random()}));
-        };
-    },
+    setRandomCount: createThunk((base: number) => ({dispatch}) => {
+        dispatch(SimpleActions.setCount({newCount: base + Math.random()}));
+    }),
 
     /**
      * Async operations such as network requests are side effects.
      *
-     * Notice that the returned thunk is an async function!
+     * Note that the returned thunk is an async function!
      */
-    fetchCount() {
-        return async (dispatch, getState) => {
-            const response = await request(API_URL);
+    fetchCount: createThunk(() => async ({dispatch}) => {
+        const response = await request(API_URL);
 
-            dispatch(
-                SimpleActions.setCount({
-                    newCount: response.body.count,
-                }),
-            );
-        };
-    },
+        dispatch(
+            SimpleActions.setCount({
+                newCount: response.body.count,
+            }),
+        );
+    }),
 
     /**
      * Thunks can dispatch other thunks and await on them
      * if needed.
      */
-    doubleFetch() {
-        return async (dispatch, getState) => {
-            // First fetch the count to the store state
-            await dispatch(this.fetchCount());
+    doubleFetch: createThunk(() => async ({dispatch, getState}) => {
+        // Start fetch.
+        // The dispatch can infer the return type to be promise
+        // when dispatching async thunks
+        const promise = dispatch(Thunks.fetchCount());
 
-            // and after that double it
-            dispatch(
-                SimpleActions.setCount({
-                    newCount: getState().count * 2,
-                }),
-            );
-        };
-    },
-});
+        // Wait for request to resolve
+        await promise;
+
+        // and after that double it
+        dispatch(
+            SimpleActions.setCount({
+                newCount: getState().count * 2,
+            }),
+        );
+    }),
+};
 
 const store = configureStore({
     // reducers option takes an array of reducers which all receive the same state object.
