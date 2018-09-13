@@ -10,6 +10,10 @@ interface GetState {
     (): unknown;
 }
 
+interface Thunk {
+    (dispatch: ReduxDispatch, getState: GetState): any;
+}
+
 /**
  * For functions return its return type otherwise return void.
  *
@@ -28,9 +32,7 @@ class SimpleStore {
         this.dispatch = this.dispatch.bind(this);
     }
 
-    dispatch<T extends Function | ReduxAction>(
-        action: T,
-    ): FunctionReturnValue<T> {
+    dispatch<T extends Thunk | ReduxAction>(action: T): FunctionReturnValue<T> {
         const ret = this._reduxDispatch(action);
 
         if (typeof action === "function") {
