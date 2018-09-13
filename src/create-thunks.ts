@@ -32,13 +32,13 @@ interface JustThunk {
 export function makeThunkCreator<MappedStore>(
     mapStore: (store: SimpleStore) => MappedStore,
 ) {
-    function createThunk<ThunkArg>(
-        thunk: (arg: ThunkArg) => (arg: MappedStore) => void,
-    ): (arg: ThunkArg) => JustThunk {
-        function myThunk(arg: ThunkArg) {
+    function createThunk<ThunkArg extends any[]>(
+        thunk: (...args: ThunkArg) => (arg: MappedStore) => void,
+    ): (...args: ThunkArg) => JustThunk {
+        function myThunk(...args: ThunkArg) {
             return (dispatch: any, getState: any) => {
                 const mapped = mapStore({dispatch, getState});
-                return thunk(arg)(mapped);
+                return thunk(...args)(mapped);
             };
         }
 

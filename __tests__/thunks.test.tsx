@@ -15,18 +15,19 @@ test("thunks work", () => {
     });
 
     const createThunk = makeThunkCreator(store => ({
+        heh: store.getState,
         lol: store.dispatch,
     }));
 
-    const myThunk = createThunk((foo: number) => wot => {
-        wot.lol(SimpleActions.setFoo({foo: "from thunk " + foo}));
+    const myThunk = createThunk((foo: number, bar: string) => wot => {
+        wot.lol(SimpleActions.setFoo({foo: "from thunk " + foo + bar}));
     });
 
     const store = configureStore({
         reducer: createReducer(SimpleActions),
     });
 
-    const ret = myThunk(3);
+    const ret = myThunk(3, "more");
 
     store.dispatch(ret);
 
