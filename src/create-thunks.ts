@@ -1,13 +1,5 @@
-interface Thunk {
-    (dispatch: Dispatch, getState: GetState): void;
-}
-
 interface Action {
     type: string;
-}
-
-interface Dispatch {
-    (action: Action | Thunk): void;
 }
 
 interface ReduxDispatch {
