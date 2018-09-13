@@ -48,8 +48,7 @@ export function makeThunkCreator<MappedStore>(
                 const mapped = mapStore(
                     new SimpleStore(reduxDispatch, getState),
                 );
-                const wat = thunk(...args)(mapped);
-                return wat;
+                return thunk(...args)(mapped);
             };
         }
 
