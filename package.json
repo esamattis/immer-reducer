@@ -32,7 +32,6 @@
         "typescript": "~3.0.3"
     },
     "dependencies": {
-        "immer": "^1.6.0",
-        "redux-devtools-extension": "^2.13.5"
+        "immer": "^1.6.0"
     }
 }

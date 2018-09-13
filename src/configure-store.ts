@@ -2,7 +2,16 @@
 // TODO typing suck here a bit
 import {createStore, compose, applyMiddleware, Store} from "redux";
 
-const {composeWithDevTools} = require("redux-devtools-extension");
+const anyWindow = window as any;
+const composeWithDevTools =
+    typeof window !== "undefined" &&
+    anyWindow.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+        ? anyWindow.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+        : function() {
+              if (arguments.length === 0) return undefined;
+              if (typeof arguments[0] === "object") return compose;
+              return compose.apply(null, arguments);
+          };
 
 /**
  * Our own redux-thunk implementation. It's so simple and there's
