@@ -114,11 +114,13 @@ test("thunk dispatch returns correct types", async () => {
                 SimpleActions.simple({foo: "dsf"}),
             );
 
-            const thunkRet: void = store.dispatch(aThunk());
-            const thunkRet2 = store.dispatch(aThunk());
+            const thunkDispatchRet: void = store.dispatch(aThunk());
+            expect(thunkDispatchRet).toBe(undefined);
 
-            const asyncRet: Promise<void> = store.dispatch(asyncThunk());
-            const asyncRet2 = store.dispatch(asyncThunk());
+            const asyncDispatchRet: Promise<void> = store.dispatch(
+                asyncThunk(),
+            );
+            expect(typeof asyncDispatchRet.then).toBe("function");
 
             thunkSpy();
         };
