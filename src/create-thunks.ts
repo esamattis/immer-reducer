@@ -33,7 +33,7 @@ class SimpleStore {
     constructor(dispatch: ReduxDispatch, getState: GetState) {
         this._dispatch = dispatch;
         this.getState = getState;
-        this.dispatch = dispatch.bind(this);
+        this.dispatch = this.dispatch.bind(this);
     }
 
     dispatch<T extends Function | Action>(action: T): OnlyPromise<T> {
