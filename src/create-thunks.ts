@@ -1,9 +1,3 @@
-import {
-    ActionTypesFromSimpleActions,
-    SimpleActionsObject,
-    SimpleActionsMeta,
-} from "./create-simple-actions";
-
 interface Thunk {
     (dispatch: Dispatch, getState: GetState): void;
 }
@@ -16,28 +10,27 @@ interface Dispatch {
     (action: Action | Thunk): void;
 }
 
-interface GetState {
-    (): unknown;
+interface ReduxDispatch {
+    (action: any): unknown;
 }
 
-// interface SimpleStore {
-//     getState: GetState;
-//     dispatch: Dispatch;
-// }
-
-interface JustThunk<T extends Promise<any> | void> {
-    (...args: any[]): OnlyPromise<T>;
+interface GetState {
+    (): unknown;
 }
 
 type OnlyPromise<T> = T extends (...args: any[]) => Promise<any>
     ? Promise<void>
     : void;
 
-class SimpleStore {
-    _dispatch: any;
-    getState: any;
+function isPromise(o: any): o is Promise<void> {
+    return Boolean(o && typeof o.then === "function");
+}
 
-    constructor(dispatch: any, getState: any) {
+class SimpleStore {
+    _dispatch: ReduxDispatch;
+    getState: GetState;
+
+    constructor(dispatch: ReduxDispatch, getState: GetState) {
         this._dispatch = dispatch;
         this.getState = getState;
         this.dispatch = dispatch.bind(this);
@@ -45,8 +38,9 @@ class SimpleStore {
 
     dispatch<T extends Function | Action>(action: T): OnlyPromise<T> {
         const ret = this._dispatch(action);
-        if (typeof ret.then === "function") {
-            return ret;
+
+        if (isPromise(ret)) {
+            return ret as any;
         }
 
         return undefined as any;
@@ -61,10 +55,14 @@ export function makeThunkCreator<MappedStore>(
         ThunkReturn extends Promise<any> | void
     >(
         thunk: (...args: ThunkArg) => (arg: MappedStore) => ThunkReturn,
-    ): (...args: ThunkArg) => (dispatch: any, getState: any) => ThunkReturn {
+    ): (
+        ...args: ThunkArg
+    ) => (reduxDispatch: ReduxDispatch, getState: GetState) => ThunkReturn {
         function myThunk(...args: ThunkArg) {
-            return (dispatch: any, getState: any) => {
-                const mapped = mapStore(new SimpleStore(dispatch, getState));
+            return (reduxDispatch: ReduxDispatch, getState: GetState) => {
+                const mapped = mapStore(
+                    new SimpleStore(reduxDispatch, getState),
+                );
                 const wat = thunk(...args)(mapped);
                 return wat;
             };
