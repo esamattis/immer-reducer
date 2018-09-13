@@ -8,5 +8,6 @@ module.exports = {
             tsConfigFile: "tsconfig.json",
         },
     },
-    testMatch: ["**/__tests__/*.+(ts|tsx|js)"],
+    testPathIgnorePatterns: ["node_modules", "build"],
+    testMatch: ["**/__tests__/*.test.(ts|tsx|js)"],
 };

@@ -7,7 +7,7 @@
         "url": "https://github.com/epeli/redux-stack"
     },
     "scripts": {
-        "test": "tsc --noEmit && jest __tests__/test.tsx"
+        "test": "tsc --noEmit && jest"
     },
     "author": "",
     "license": "ISC",
