@@ -15,15 +15,15 @@ test("thunks work", () => {
     });
 
     const createThunk = makeThunkCreator(store => ({
-        heh: () => store.getState() as typeof initialState,
-        ding: store.dispatch,
+        getState: () => store.getState() as typeof initialState,
+        dispatch: store.dispatch,
     }));
 
-    const myThunk = createThunk((foo: number, bar: string) => wot => {
-        wot.ding(SimpleActions.setFoo({foo: "from thunk " + foo + bar}));
+    const myThunk = createThunk((foo: number, bar: string) => store => {
+        store.dispatch(SimpleActions.setFoo({foo: "from thunk " + foo + bar}));
 
         // just type testing
-        const fromStoreFoo: string = wot.heh().foo;
+        const fromStoreFoo: string = store.getState().foo;
     });
 
     const store = configureStore({
@@ -48,15 +48,14 @@ test("thunks can call other thunks", async () => {
     });
 
     const createThunk = makeThunkCreator(store => ({
-        heh: store.getState,
-        lol: store.dispatch,
+        dispatch: store.dispatch,
     }));
 
     const myThunk = createThunk((boo: number) => {
         return async store => {
-            store.lol(SimpleActions.setFoo({foo: "first"}));
+            store.dispatch(SimpleActions.setFoo({foo: "first"}));
             thunkSpy();
-            await store.lol(slowThunk());
+            await store.dispatch(slowThunk());
         };
     });
 
@@ -64,7 +63,7 @@ test("thunks can call other thunks", async () => {
         return async store => {
             await wait(50);
             thunkSpy();
-            store.lol(SimpleActions.setFoo({foo: "slow"}));
+            store.dispatch(SimpleActions.setFoo({foo: "slow"}));
         };
     });
 
@@ -96,16 +95,12 @@ test("thunk dispatch returns correct types", async () => {
         dispatch: store.dispatch,
     }));
 
-    const aThunk = createThunk(() => {
-        return store => {
-            store.dispatch(SimpleActions.simple({foo: "slow"}));
-        };
+    const aThunk = createThunk(() => store => {
+        store.dispatch(SimpleActions.simple({foo: "slow"}));
     });
 
-    const asyncThunk = createThunk(() => {
-        return async store => {
-            await wait(1);
-        };
+    const asyncThunk = createThunk(() => async store => {
+        await wait(1);
     });
 
     const testThunk = createThunk(() => {
