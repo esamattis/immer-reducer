@@ -16,11 +16,11 @@ test("thunks work", () => {
 
     const createThunk = makeThunkCreator(store => ({
         heh: store.getState,
-        lol: store.dispatch,
+        ding: store.dispatch,
     }));
 
     const myThunk = createThunk((foo: number, bar: string) => wot => {
-        wot.lol(SimpleActions.setFoo({foo: "from thunk " + foo + bar}));
+        wot.ding(SimpleActions.setFoo({foo: "from thunk " + foo + bar}));
     });
 
     const store = configureStore({
@@ -31,47 +31,50 @@ test("thunks work", () => {
 
     store.dispatch(ret);
 
-    expect(store.getState()).toEqual({foo: "from thunk 3"});
+    expect(store.getState()).toEqual({foo: "from thunk 3more"});
 });
 
-// test("thunks can call other thunks", async () => {
-//     const initialState = {foo: "bar"};
-//     const thunkSpy = jest.fn();
+test("thunks can call other thunks", async () => {
+    const initialState = {foo: "bar"};
+    const thunkSpy = jest.fn();
 
-//     const SimpleActions = createSimpleActions(initialState, {
-//         setFoo(state, action: {foo: string}) {
-//             return {...state, foo: action.foo};
-//         },
-//     });
+    const SimpleActions = createSimpleActions(initialState, {
+        setFoo(state, action: {foo: string}) {
+            return {...state, foo: action.foo};
+        },
+    });
 
-//     const Thunks = createThunks(SimpleActions, {
-//         myThunk(boo: number) {
-//             return async (dispatch, getState) => {
-//                 dispatch(SimpleActions.setFoo({foo: "first"}));
-//                 thunkSpy();
-//                 await dispatch(this.slowThunk());
-//             };
-//         },
+    const createThunk = makeThunkCreator(store => ({
+        heh: store.getState,
+        lol: store.dispatch,
+    }));
 
-//         slowThunk() {
-//             return async dispatch => {
-//                 await wait(50);
-//                 thunkSpy();
-//                 dispatch(SimpleActions.setFoo({foo: "slow"}));
-//             };
-//         },
-//     });
+    const myThunk = createThunk((boo: number) => {
+        return async store => {
+            store.lol(SimpleActions.setFoo({foo: "first"}));
+            thunkSpy();
+            await store.lol(slowThunk());
+        };
+    });
 
-//     const store = configureStore({
-//         reducer: createReducer(SimpleActions),
-//     });
-//     store.dispatch(Thunks.myThunk(3));
+    const slowThunk = createThunk(() => {
+        return async store => {
+            await wait(50);
+            thunkSpy();
+            store.lol(SimpleActions.setFoo({foo: "slow"}));
+        };
+    });
 
-//     expect(thunkSpy).toHaveBeenCalledTimes(1);
-//     expect(store.getState()).toEqual({foo: "first"});
+    const store = configureStore({
+        reducer: createReducer(SimpleActions),
+    });
+    store.dispatch(myThunk(3));
 
-//     await wait(100);
+    expect(thunkSpy).toHaveBeenCalledTimes(1);
+    expect(store.getState()).toEqual({foo: "first"});
 
-//     expect(thunkSpy).toHaveBeenCalledTimes(2);
-//     expect(store.getState()).toEqual({foo: "slow"});
-// });
+    await wait(100);
+
+    expect(thunkSpy).toHaveBeenCalledTimes(2);
+    expect(store.getState()).toEqual({foo: "slow"});
+});
