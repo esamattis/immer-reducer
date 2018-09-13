@@ -44,12 +44,12 @@ class SimpleStore {
 export function makeThunkCreator<MappedStore>(
     mapStore: (store: SimpleStore) => MappedStore,
 ) {
-    function createThunk<ThunkArg extends any[], ThunkReturn>(
-        thunk: (...args: ThunkArg) => (arg: MappedStore) => ThunkReturn,
+    function createThunk<ThunkArgs extends any[], ThunkReturn>(
+        thunk: (...args: ThunkArgs) => (arg: MappedStore) => ThunkReturn,
     ): (
-        ...args: ThunkArg
+        ...args: ThunkArgs
     ) => (reduxDispatch: ReduxDispatch, getState: GetState) => ThunkReturn {
-        function myThunk(...args: ThunkArg) {
+        function myThunk(...args: ThunkArgs) {
             return (reduxDispatch: ReduxDispatch, getState: GetState) => {
                 const mapped = mapStore(
                     new SimpleStore(reduxDispatch, getState),
