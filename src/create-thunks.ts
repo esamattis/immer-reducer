@@ -17,7 +17,7 @@ interface Dispatch {
 }
 
 interface GetState {
-    (): any;
+    (): unknown;
 }
 
 interface SimpleStore {

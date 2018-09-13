@@ -15,12 +15,15 @@ test("thunks work", () => {
     });
 
     const createThunk = makeThunkCreator(store => ({
-        heh: store.getState,
+        heh: () => store.getState() as typeof initialState,
         ding: store.dispatch,
     }));
 
     const myThunk = createThunk((foo: number, bar: string) => wot => {
         wot.ding(SimpleActions.setFoo({foo: "from thunk " + foo + bar}));
+
+        // just type testing
+        const fromStoreFoo: string = wot.heh().foo;
     });
 
     const store = configureStore({
