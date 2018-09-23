@@ -185,12 +185,12 @@ const store = configureStore({
 [`redux-render-prop`][rrp] is another library by me but it's bit more stable so it lives in it's own package.
 
 ```tsx
-import {makeCreator} from "redux-render-prop";
+import {makeComponentCreator} from "redux-render-prop";
 import {bindActionCreators} from "redux";
 
 const AllActions = {...SimpleActions, ...Thunks};
 
-export const createMyAppComponent = makeCreator({
+export const createMyAppComponent = makeComponentCreator({
     prepareState: (state: State) => state,
 
     prepareActions: dispatch => {
