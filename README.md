@@ -1,5 +1,7 @@
 # Epeli's Redux Stack for TypeScript
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/epeli/redux-stack.svg)](https://greenkeeper.io/)
+
 Fairly opinionated Redux Stack for TypeScript. This is made two design goals in mind:
 
 1.  Be type safe
