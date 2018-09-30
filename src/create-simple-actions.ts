@@ -129,7 +129,7 @@ export function createReducer<
         state = meta.initialState,
         action: ActionTypesFromSimpleActions<Actions>,
     ): State {
-        const type: string = action.type;
+        const type = String(action.type);
 
         if (!type.startsWith(meta.prefix + ":")) {
             return state;
