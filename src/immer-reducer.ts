@@ -61,7 +61,7 @@ function removePrefix(actionType: string) {
 export function createActionCreators<T extends ImmerReducerClass>(
     immerReducerClass: T,
 ): ActionCreators<T> {
-    const creators: {[key: string]: Function} = {};
+    const actionCreators: {[key: string]: Function} = {};
 
     Object.keys(immerReducerClass.prototype).forEach(key => {
         const method = immerReducerClass.prototype[key];
@@ -70,7 +70,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
             return;
         }
 
-        creators[key] = (...args: any[]) => {
+        actionCreators[key] = (...args: any[]) => {
             return {
                 type: PREFIX + ":" + key,
                 payload: args,
@@ -78,7 +78,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
         };
     });
 
-    return creators as any;
+    return actionCreators as any;
 }
 
 interface ImmerReducerFunction<T extends ImmerReducerClass> {
