@@ -12,3 +12,6 @@ const reducer = createReducer(SimpleActions);
 
 // $ExpectError
 reducer(initialState, SimpleActions.setFoo({foo: /bad/}));
+
+// $ExpectError
+reducer(initialState, SimpleActions.setFoo({foo: "bar", bad: 1}));
