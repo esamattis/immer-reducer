@@ -1,11 +1,11 @@
 {
-    "name": "@epeli/redux-stack",
-    "version": "0.7.1",
+    "name": "immer-reducer",
+    "version": "0.1.0",
     "description": "",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "repository": {
-        "url": "https://github.com/epeli/redux-stack"
+        "url": "https://github.com/epeli/immer-reducer"
     },
     "scripts": {
         "test": "npm run dtslint && jest",

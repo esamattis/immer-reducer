@@ -1,205 +1,140 @@
-# Epeli's Redux Stack for TypeScript
+# Immer Reducer
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/epeli/redux-stack.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/epeli/immer-reducer.svg)](https://greenkeeper.io/)
 
-Fairly opinionated Redux Stack for TypeScript. This is made two design goals in mind:
-
-1.  Be type safe
-2.  Be terse (Redux doesn't have to be verbose!)
-
-I really don't recommend you to use this as is because this is fairly living library but if you like something here feel free to fork this or copy paste some parts to your project.
-
-If you happen to work with me, you're in luck because you are now working with something that is actually somewhat documented :)
+Create (type safe) Redux reducers using [Immer](https://github.com/mweststrate/immer)!
 
 ## Install
 
-Install with redux (it's a peer dep)
+    npm install immer-reducer
 
-    npm install @epeli/redux-stack redux
+## Usage
 
-## Exported functions
+Reducers are defined by extending from the `ImmerReducer` class
 
-Small overview. See usage example in the end.
+```js
+import {ImmerReducer, createActionCreators} from "immer-reducer";
 
-### `configureStore(options: Object): ReduxStore`
+export class MyImmerReducer extends ImmerReducer {
+    // each method becomes a reducer
+    setFirstName(firstName) {
+        // State update are simple as assigning a value to the state property thanks to Immer
+        this.draftState.firstName = firstName;
+    }
 
-This basically a fork from [`@acemarke/redux-starter-kit`][starter] which is adapted to TypeScript.
+    setLastName(lastName) {
+        this.draftState.lastName = lastName;
+    }
 
-Simplifies store creation. Adds redux-thunk middleware and creates devtools connection automatically.
-
-[starter]: https://github.com/markerikson/redux-starter-kit
-
-options:
-
--   `reducer?: Reducer`: Single reducer
--   `reducers?: Reducer[]`: Multiple reducers for the same state
--   `middleware?: Middleware[]`: Redux middlewares. By default add redux-thunk
--   `devTools?: boolean`: Enables or disables redux-devtools. By default is enabled
--   `preloadedState?: State`: Preload store with a state
--   `enhancers?: Enhancers[]`: Redux enhancers
-
-### `createSimpleActions(actions: Object, options?: Object): SimpleActions`
-
-Create action types, action creators and reducers in one go. Immutable updates are made type safe and terse with [Immer][].
-
-[immer]: https://github.com/mweststrate/immer
-
-This is originally forked from [wkrueger/redutser][redutser]. Huge props for creating it!
-
-[redutser]: https://github.com/wkrueger/redutser
-
-options:
-
--   `actionTypePrefix: string`: Custom prefix for the generated actions types
-
-### `createReducer(actions: SimpleActions)`
-
-Create reducer from simple actions for the redux store
-
-### `makeThunkCreator(mapStore: Function)`
-
-Create thunks from simple actions for side effects (api calls etc.).
-
-## Usage example
-
-```tsx
-import {
-    createSimpleActions,
-    createReducer,
-    makeThunkCreator,
-} from "@epeli/redux-stack";
-
-/**
- * Define state as a single interface
- * */
-interface State {
-    count: number;
+    // You can combine reducers too
+    setName(firstName, lastName) {
+        this.setFirstName(firstName);
+        this.setLastName(firstName);
+    }
 }
+```
+
+Generate Action Creators and the actual reducer function for Redux
+
+```js
+import {createActionCreators, createReducerFunction} from "immer-reducer";
+
+export const ActionCreators = createActionCreators(MyImmerReducer);
+export const reducerFunction = createReducerFunction(MyImmerReducer);
+```
+
+and create a Redux store
+
+```js
+import {createStore} from "redux";
 
 const initialState = {
-    count: 0,
+    firstName: "",
+    lastName: "",
 };
 
-/**
- * Simple actions are simple. No side effects. Just state
- * updates using Immer. Everything else should be made
- * using thunks.
- */
-const SimpleActions = createSimpleActions(initialState, {
-    /**
-     * draftState is an Immer proxy so the updates can be made in
-     * mutable style but the actual result will be properly immutable
-     */
-    setCount(draftState, action: {newCount: number}) {
-        draftState.count = action.newCount;
-        return draftState;
-    },
+const store = createStore(reducerFunction, initialState);
+```
 
-    /**
-     * Actions without any params still need an empty action object
-     */
-    increment(draftState, action: {}) {
-        draftState.count += 1;
-        return draftState;
-    },
-});
+Dispatch some actions
 
-/**
- * Make typed thunk creator.
- * Usually you only need to create one of these per app.
- *
- * You decorate the store passed to the thunks in any
- * way you wish. The types will be inferred automatically
- * for it.
- */
-const createThunk = makeThunkCreator(store => ({
-    // Here we just add our state type to getState
-    getState: () => store.getState() as typeof initialState,
-    dispatch: store.dispatch,
-}));
+```js
+store.dispatch(ActionCreators.setFirstName("Charlie"));
+store.dispatch(ActionCreators.setLastName("Brown"));
 
-const Thunks = {
-    /**
-     * Side effects should be created in thunks.
-     * For example calling random() is a side effect.
-     *
-     * Type of setRandomCount will be
-     *
-     *  (base: number) => (reduxDispatch: Dispatch, getState: GetState) => void
-     */
-    setRandomCount: createThunk((base: number) => ({dispatch}) => {
-        dispatch(SimpleActions.setCount({newCount: base + Math.random()}));
-    }),
+expect(store.getState().firstName).toEqual("Charlie");
+expect(store.getState().lastName).toEqual("Brown");
+```
 
-    /**
-     * Async operations such as network requests are side effects.
-     *
-     * Note that the returned thunk is an async function!
-     */
-    fetchCount: createThunk(() => async ({dispatch}) => {
-        const response = await request(API_URL);
+Under the hood the class is desconstructed to following actions:
 
-        dispatch(
-            SimpleActions.setCount({
-                newCount: response.body.count,
-            }),
-        );
-    }),
+```js
+{
+    type: "IMMER_REDUCER:setFirstName",
+    payload: ["Charlie"],
+}
+{
+    type: "IMMER_REDUCER:setLastName",
+    payload: ["Brown"],
+}
+```
 
-    /**
-     * Thunks can dispatch other thunks and await on them
-     * if needed.
-     */
-    doubleFetch: createThunk(() => async ({dispatch, getState}) => {
-        // Start fetch.
-        // The dispatch can infer the return type to be promise
-        // when dispatching async thunks
-        const promise = dispatch(Thunks.fetchCount());
+So the method names becomes Redux Action Types and the method arguments
+becomes the action payload. The reducer function will then match these
+actions against the class and calls the approciate methods with the payload
+spread to the arguments. But do note that the action format is not part of
+the public API so don't write any code relying on it. The actions are handled
+by the generated reducer function.
 
-        // Wait for request to resolve
-        await promise;
+The generated reducer function executes the methods inside the `produce()`
+function of Immer enabling the terse mutatable style updates.
 
-        // and after that double it
-        dispatch(
-            SimpleActions.setCount({
-                newCount: getState().count * 2,
-            }),
-        );
-    }),
+# 100% Type Safety With Typescript
+
+This library by no means requires you to use Typescript but it was written
+spesifically Typescript usage in mind because I was unable to find any other
+libraries that are both boilerplate free and 100% type safe.
+
+The Typescript usage does not differ that much from the Javascript usage.
+Just pass your state type as the type argument for the class
+
+```ts
+const initialState = {
+    firstName: "",
+    lastName: "",
 };
 
-const store = configureStore({
-    // reducers option takes an array of reducers which all receive the same state object.
-    reducers: [
-        // Create reducer from the simple actions
-        createReducer(SimpleActions),
+class MyImmerReducer extends ImmerReducer<typeof initialState> {
+    setFirstName(firstName: string) {
+        this.draftState.firstName = firstName;
+    }
 
-        // If you need to keep your old reducers still around
-        oldReducer,
-    ],
-});
-// For other options use your editor intellisense or checkout the code.
+    setLastName(lastName: string) {
+        this.draftState.lastName = lastName;
+    }
+}
 ```
 
-## Usage with redux-render-prop
+The generated ActionsTypes object now respects the types used in the class
 
-[`redux-render-prop`][rrp] is another library by me but it's bit more stable so it lives in it's own package.
+```ts
+const ActionCreators = createActionCreators(MyImmerReducer);
 
-```tsx
-import {makeComponentCreator} from "redux-render-prop";
-import {bindActionCreators} from "redux";
-
-const AllActions = {...SimpleActions, ...Thunks};
-
-export const createMyAppComponent = makeComponentCreator({
-    prepareState: (state: State) => state,
-
-    prepareActions: dispatch => {
-        return bindActionCreators(AllActions, dispatch);
-    },
-});
+ActionCreators.setFirstName("Charlie"); // OK
+ActionCreators.setFirstName(1); // Type error
+ActionCreators.setWAT("Charlie"); // Type error
 ```
 
-For more comprehensive example checkout the `redux-render-prop` readme.
+The reducer function is also typed properly
 
-[rrp]: https://github.com/epeli/redux-render-prop
+```ts
+const reducer = createReducerFunction(MyImmerReducer);
+
+reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
+reducer(initialState, {type: "WAT"}); // Type error
+reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
+```
+
+If you enjoy this then also checkout
+[redux-render-prop](https://github.com/epeli/redux-render-prop) for type safe
+`connect()` alternative.
