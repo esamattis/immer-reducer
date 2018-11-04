@@ -15,13 +15,8 @@ test("can create reducers", () => {
 
     const reducer = createReducer(SimpleActions);
 
-    // just some type tests
+    // just a type test
     reducer(initialState, SimpleActions.setFoo({foo: "typetest"}));
-    // this must fail
-    // @ts-ignore
-    reducer(initialState, {type: "setFoofail", payload: {foo: "test"}});
-    // @ts-ignore
-    reducer(initialState, {type: "setFoo", payload: {foo: "test"}});
 
     const store = configureStore({
         reducer,
@@ -111,40 +106,19 @@ test("reducers use immer", () => {
     expect(store.getState()).toEqual({nest: {foo: "next"}});
 });
 
-test("can disable immer", () => {
-    const initialState = {nest: {foo: "initial"}};
-
-    const SimpleActions = createSimpleActions(
-        initialState,
-        {
-            setFoo(state, action: {foo: string}) {
-                state.nest.foo = action.foo;
-                return state;
-            },
-        },
-        {immer: false},
-    );
-
-    const store = configureStore({
-        reducer: createReducer(SimpleActions),
-    });
-
-    store.dispatch(SimpleActions.setFoo({foo: "next"}));
-
-    // YES mutation!
-    expect(initialState.nest).toBe(store.getState()!.nest);
-});
-
-test("can call other reducers", () => {
+test("can call other simple actions using dispatch", () => {
     const initialState = {foo: "bar"};
 
     const SimpleActions = createSimpleActions(initialState, {
-        setFoo(state, action: {foo: string}) {
-            return this.setBar(state, {bar: action.foo});
+        setFoo(state, action: {foo: string}, dispatch) {
+            dispatch(state, SimpleActions.setBar({bar: action.foo}));
+
+            return state;
         },
 
-        setBar(state, action: {bar: string}) {
-            return {...state, foo: action.bar + "BAR"};
+        setBar(draftState, action: {bar: string}) {
+            draftState.foo = action.bar + "BAR";
+            return draftState;
         },
     });
 

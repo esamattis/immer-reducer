@@ -8,14 +8,22 @@ export const SIMPLE_ACTIONS_META = Symbol("SIMPLE_ACTIONS_META");
 export const NO_MANUAL = Symbol("NO_MANUAL");
 const DEFAULT_PREFIX = "SIMPLE_ACTION";
 
-type SecondArg<T> = T extends (x: any, y: infer V) => any ? V : never;
+type SecondArg<T> = T extends (x: any, y: infer V, ...args: any[]) => any
+    ? V
+    : never;
 type Values<K> = K[keyof K];
 
 export interface SimpleActionsObject<State> {
     [name: string]: (
-        this: SimpleActionsObject<State>,
+        this: void,
         state: State,
         action: any,
+        dispatch: (
+            state: State,
+            action: {
+                [NO_MANUAL]: "do not create action objects manually";
+            },
+        ) => State,
     ) => State;
 }
 
@@ -23,7 +31,6 @@ export interface SimpleActionsMeta<State, Actions> {
     [SIMPLE_ACTIONS_META]: {
         initialState: State;
         actions: Actions;
-        immer: boolean;
         prefix: string;
     };
 }
@@ -81,7 +88,6 @@ export const createSimpleActions = <
             prefix: options
                 ? options.actionTypePrefix || DEFAULT_PREFIX
                 : DEFAULT_PREFIX,
-            immer: options ? Boolean(options.immer) : true,
         },
     };
 
@@ -103,11 +109,15 @@ function createActionCreators(prefix: string) {
         dict: D,
     ): ActionCreatorsFromSimpleActions<D> => {
         return Object.keys(dict).reduce(
-            (out, name) => ({
-                ...out,
-                [name]: (i: any) => ({type: prefix + ":" + name, payload: i}),
-            }),
-            {},
+            (dict, name) => {
+                dict[name] = (action: any) => ({
+                    type: prefix + ":" + name,
+                    payload: action,
+                });
+
+                return dict;
+            },
+            {} as any,
         ) as any;
     };
 }
@@ -141,12 +151,24 @@ export function createReducer<
             return state;
         }
 
-        if (meta.immer === false) {
-            return actionFn.call(meta.actions, state, action.payload);
-        }
+        const dispatchSubaction = (
+            draftState: State,
+            action: {type: string; payload: unknown},
+        ) => {
+            const subaction = meta.actions[removePrefix(action.type)];
+            return subaction(
+                draftState as State,
+                action.payload,
+                dispatchSubaction as any,
+            );
+        };
 
         return produce(state, draftState => {
-            return actionFn.call(meta.actions, draftState, action.payload);
+            return actionFn(
+                draftState as State,
+                action.payload,
+                dispatchSubaction as any,
+            );
         });
     };
 }
