@@ -102,13 +102,16 @@ The Typescript usage does not differ that much from the Javascript usage.
 Just pass your state type as the type argument for the class
 
 ```ts
-const initialState = {
-    firstName: "",
-    lastName: "",
-};
+interface State {
+    // The state can be defined as read only
+    readonly firstName: string;
+    readonly lastName: string;
+}
 
-class MyImmerReducer extends ImmerReducer<typeof initialState> {
+class MyImmerReducer extends ImmerReducer<State> {
     setFirstName(firstName: string) {
+        // draftState has the State type but the readonly
+        // flags are removed here to allow type safe mutation
         this.draftState.firstName = firstName;
     }
 
@@ -132,6 +135,11 @@ The reducer function is also typed properly
 
 ```ts
 const reducer = createReducerFunction(MyImmerReducer);
+
+const initialState: State = {
+    firstName: "",
+    lastName: "",
+};
 
 reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
 reducer(initialState, {type: "WAT"}); // Type error
