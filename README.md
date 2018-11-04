@@ -2,7 +2,9 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/epeli/immer-reducer.svg)](https://greenkeeper.io/)
 
-Create Redux reducers using [Immer](https://github.com/mweststrate/immer)! [Typescript friendly](#100-type-safety-with-typescript).
+Create Redux reducers using [Immer](https://github.com/mweststrate/immer)!
+
+Typescript [friendly](#100-type-safety-with-typescript) too.
 
 ## Install
 
