@@ -2,17 +2,17 @@
     "name": "immer-reducer",
     "version": "0.1.0",
     "description": "",
-    "main": "lib/index.js",
-    "types": "lib/index.d.ts",
+    "main": "lib/immer-reducer.js",
+    "types": "lib/immer-reducer.d.ts",
     "repository": {
         "url": "https://github.com/epeli/immer-reducer"
     },
     "scripts": {
         "test": "npm run dtslint && jest",
-        "build": "npm run test && tsc --project tsconfig.build.json && rm -rf lib && mv build/src lib && rm -rf build",
+        "build": "tsc --project tsconfig.build.json && rm -rf lib && mv build/src lib && rm -rf build",
         "clean": "rm -rf lib build",
         "dtslint": "tslint --project tsconfig.dtslint.json",
-        "prepublish": "npm run build"
+        "prepublishOnly": "npm run test && npm run build"
     },
     "author": "",
     "license": "ISC",

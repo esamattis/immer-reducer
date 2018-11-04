@@ -2,7 +2,6 @@ import {
     ImmerReducer,
     createActionCreators,
     createReducerFunction,
-    ImmerReducerClass,
 } from "../src/immer-reducer";
 
 interface State {
