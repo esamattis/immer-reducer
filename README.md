@@ -18,7 +18,7 @@ Reducers are defined by extending from the `ImmerReducer` class
 import {ImmerReducer, createActionCreators} from "immer-reducer";
 
 class MyImmerReducer extends ImmerReducer {
-    // each method becomes a reducer
+    // each method becomes an Action Creator
     setFirstName(firstName) {
         // State updates are simple as assigning a value to
         // the draftState property thanks to Immer
@@ -29,7 +29,7 @@ class MyImmerReducer extends ImmerReducer {
         this.draftState.lastName = lastName;
     }
 
-    // You can combine reducers too
+    // You can combine methods to single Action Creator
     setName(firstName, lastName) {
         this.setFirstName(firstName);
         this.setLastName(firstName);
