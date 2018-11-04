@@ -74,6 +74,16 @@ const newState: State | undefined = reducer(
     },
 );
 
+// bad state for the reducer
+reducer(
+    // $ExpectError
+    {foo: "sdf", bar: "should be number"},
+    {
+        type: "setBar",
+        payload: [3],
+    },
+);
+
 // Bad action object
 // $ExpectError
 reducer({foo: "sdf", bar: 2}, {});
