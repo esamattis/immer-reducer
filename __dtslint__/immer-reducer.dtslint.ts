@@ -60,7 +60,7 @@ createActionCreators(BadReducer);
 
 const reducer = createReducerFunction(MyReducer);
 
-const newState: State = reducer(
+const newState: State | undefined = reducer(
     {foo: "sdf", bar: 2},
     {
         type: "setBar",
