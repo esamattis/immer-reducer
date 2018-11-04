@@ -8,11 +8,15 @@ type FunctionPropertyNames<T> = {
 
 type Methods<T> = Pick<T, FunctionPropertyNames<T>>;
 
-type JustReturnTypes<T extends {[key: string]: () => any}> = {
+type FlattenToReturnTypes<T extends {[key: string]: () => any}> = {
     [K in keyof T]: ReturnType<T[K]>
 };
 
 type ObjectValueTypes<T> = T[keyof T];
+
+type ReturnTypeUnion<T extends {[key: string]: () => any}> = ObjectValueTypes<
+    FlattenToReturnTypes<T>
+>;
 
 export interface ImmerReducerClass {
     new (...args: any[]): ImmerReducer<any>;
@@ -56,7 +60,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
 interface ImmerReducerFunction<T extends ImmerReducerClass> {
     (
         state: ImmerReducerState<T>,
-        action: ObjectValueTypes<JustReturnTypes<ActionCreators<T>>>,
+        action: ReturnTypeUnion<ActionCreators<T>>,
     ): ImmerReducerState<T>;
 }
 
