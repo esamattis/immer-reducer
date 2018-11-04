@@ -17,7 +17,7 @@ Reducers are defined by extending from the `ImmerReducer` class
 ```js
 import {ImmerReducer, createActionCreators} from "immer-reducer";
 
-export class MyImmerReducer extends ImmerReducer {
+class MyImmerReducer extends ImmerReducer {
     // each method becomes a reducer
     setFirstName(firstName) {
         // State updates are simple as assigning a value to
@@ -42,8 +42,8 @@ Generate Action Creators and the actual reducer function for Redux
 ```js
 import {createActionCreators, createReducerFunction} from "immer-reducer";
 
-export const ActionCreators = createActionCreators(MyImmerReducer);
-export const reducerFunction = createReducerFunction(MyImmerReducer);
+const ActionCreators = createActionCreators(MyImmerReducer);
+const reducerFunction = createReducerFunction(MyImmerReducer);
 ```
 
 and create a Redux store
