@@ -93,7 +93,10 @@ function of Immer enabling the terse mutatable style updates.
 
 This library by no means requires you to use Typescript but it was written
 specifically Typescript usage in mind because I was unable to find any other
-libraries that make Redux usage both boilerplate free and 100% type safe.
+libraries that make Redux usage both boilerplate free and 100% type safe. To
+be honest it was no easy feat. Pretty advanced Typescript sorcery was
+required and so this library requires Typescript 3.1 or later. But the end
+results is really simple for the end user.
 
 The Typescript usage does not differ that much from the Javascript usage.
 Just pass your state type as the type argument for the class
