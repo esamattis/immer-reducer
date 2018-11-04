@@ -30,10 +30,17 @@ class MyReducer extends ImmerReducer<State> {
 
 const ActionCreators = createActionCreators(MyReducer);
 
+// Action creator return Action Object
 const action: {
     type: "setBar";
     payload: [number];
 } = ActionCreators.setBar(3);
+
+// actions without payload
+ActionCreators.setFooStatic();
+
+// Actions with multiple items in the payload
+ActionCreators.setBoth("foo", 1);
 
 // Only function properties is picked
 // $ExpectError
@@ -67,18 +74,21 @@ const newState: State | undefined = reducer(
     },
 );
 
+// Bad action object
 // $ExpectError
 reducer({foo: "sdf", bar: 2}, {});
 
+// Bad payload type
 reducer(
     {foo: "sdf", bar: 2},
     // $ExpectError
     {
         type: "setBar",
-        payload: ["bad"],
+        payload: ["should be number here"],
     },
 );
 
+// Bad action type
 reducer(
     {foo: "sdf", bar: 2},
     {
@@ -91,12 +101,13 @@ reducer(
 reducer({foo: "sdf", bar: 2}, ActionCreators.setBar(3));
 
 class OtherReducer extends ImmerReducer<State> {
-    setDing(dong: string) {}
+    setDing(dong: string) {
+        this.draftState.foo = dong;
+    }
 }
 
 const OtherActionCreators = createActionCreators(OtherReducer);
 
-OtherActionCreators.setDing("sdf");
-
+// Mixed reducer and action creators from different ImmerReducer classes
 // $ExpectError
 reducer({foo: "sdf", bar: 2}, OtherActionCreators.setDing("sdf"));
