@@ -1,40 +1,43 @@
 {
-  "name": "@epeli/redux-stack",
-  "version": "0.7.1",
-  "description": "",
-  "main": "build/src/index.js",
-  "repository": {
-    "url": "https://github.com/epeli/redux-stack"
-  },
-  "scripts": {
-    "prepublish": "tsc",
-    "test": "tsc --noEmit && jest"
-  },
-  "author": "",
-  "license": "ISC",
-  "types": "./typings/src/index.d.ts",
-  "files": [
-    "build/src",
-    "typings/src"
-  ],
-  "devDependencies": {
-    "@types/jest": "^23.3.9",
-    "@types/react": "^16.4.18",
-    "@types/react-dom": "^16.0.9",
-    "@types/react-redux": "^6.0.9",
-    "jest": "^23.6.0",
-    "prettier": "^1.14.3",
-    "react": "^16.6.0",
-    "react-dom": "^16.6.0",
-    "react-redux": "^5.1.0",
-    "react-testing-library": "^5.2.3",
-    "ts-jest": "^23.10.4",
-    "typescript": "~3.1.6"
-  },
-  "peerDependencies": {
-    "redux": "^4.0.0"
-  },
-  "dependencies": {
-    "immer": "^1.7.4"
-  }
+    "name": "@epeli/redux-stack",
+    "version": "0.7.1",
+    "description": "",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "repository": {
+        "url": "https://github.com/epeli/redux-stack"
+    },
+    "scripts": {
+        "test": "npm run dtslint && jest",
+        "build": "npm run test && tsc --project tsconfig.build.json && rm -rf lib && mv build/src lib && rm -rf build",
+        "clean": "rm -rf lib build",
+        "dtslint": "tslint --project tsconfig.dtslint.json",
+        "prepublish": "npm run build"
+    },
+    "author": "",
+    "license": "ISC",
+    "files": [
+        "lib"
+    ],
+    "devDependencies": {
+        "@types/jest": "^23.3.9",
+        "@types/react": "^16.4.18",
+        "@types/react-dom": "^16.0.9",
+        "@types/react-redux": "^6.0.9",
+        "dtslint": "^0.3.0",
+        "jest": "^23.6.0",
+        "prettier": "^1.14.3",
+        "react": "^16.6.0",
+        "react-dom": "^16.6.0",
+        "react-redux": "^5.1.0",
+        "react-testing-library": "^5.2.3",
+        "ts-jest": "^23.10.4",
+        "typescript": "~3.1.6"
+    },
+    "peerDependencies": {
+        "redux": "^4.0.0"
+    },
+    "dependencies": {
+        "immer": "^1.7.4"
+    }
 }
