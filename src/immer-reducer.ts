@@ -1,5 +1,7 @@
 import produce, {Draft} from "immer";
 
+const PREFIX = "IMMER_REDUCER";
+
 type ArgumentsType<T> = T extends (...args: infer V) => any ? V : never;
 
 type FunctionPropertyNames<T> = {
@@ -49,6 +51,13 @@ export class ImmerReducer<T> {
     }
 }
 
+function removePrefix(actionType: string) {
+    return actionType
+        .split(":")
+        .slice(1)
+        .join(":");
+}
+
 export function createActionCreators<T extends ImmerReducerClass>(
     immerReducerClass: T,
 ): ActionCreators<T> {
@@ -63,7 +72,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
 
         creators[key] = (...args: any[]) => {
             return {
-                type: key,
+                type: PREFIX + ":" + key,
                 payload: args,
             };
         };
@@ -83,7 +92,11 @@ export function createReducerFunction<T extends ImmerReducerClass>(
     immerReducerClass: T,
 ): ImmerReducerFunction<T> {
     return function immerReducerFunction(state, action) {
-        const methodKey = action.type;
+        if (!action.type.startsWith(PREFIX + ":")) {
+            return state;
+        }
+
+        const methodKey = removePrefix(action.type);
 
         if (typeof immerReducerClass.prototype[methodKey] !== "function") {
             return state;

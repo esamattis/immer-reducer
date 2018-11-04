@@ -86,31 +86,32 @@ test("can update state using mutiple methods", () => {
     expect(store.getState()).toEqual({foo: "next", bar: 2});
 });
 
-// test("action type name", () => {
-//     const initialState = {foo: "bar"};
+test("action type name", () => {
+    const initialState = {foo: "bar"};
 
-//     const SimpleActions = createSimpleActions(initialState, {
-//         setFoo(state, action: {foo: string}) {
-//             return {...state, foo: action.foo};
-//         },
-//     });
+    class TestReducer extends ImmerReducer<typeof initialState> {
+        setFoo(foo: string) {
+            this.draftState.foo = foo;
+        }
+    }
 
-//     const reducer = jest.fn(createReducer(SimpleActions));
+    const ActionCreators = createActionCreators(TestReducer);
 
-//     const store = configureStore({
-//         reducer,
-//     });
+    const reducer = createReducerFunction(TestReducer);
+    const reducerSpy = jest.fn(reducer);
 
-//     store.dispatch(SimpleActions.setFoo({foo: "next"}));
+    const store = createStore(reducerSpy as typeof reducer, initialState);
 
-//     expect(reducer).toHaveBeenLastCalledWith(
-//         {foo: "bar"},
-//         {
-//             payload: {foo: "next"},
-//             type: "SIMPLE_ACTION:setFoo",
-//         },
-//     );
-// });
+    store.dispatch(ActionCreators.setFoo("next"));
+
+    expect(reducerSpy).toHaveBeenLastCalledWith(
+        {foo: "bar"},
+        {
+            payload: ["next"],
+            type: "IMMER_REDUCER:setFoo",
+        },
+    );
+});
 
 // test("allow custom action type name", () => {
 //     const initialState = {foo: "bar"};
