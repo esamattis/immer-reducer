@@ -18,7 +18,8 @@ import {ImmerReducer, createActionCreators} from "immer-reducer";
 export class MyImmerReducer extends ImmerReducer {
     // each method becomes a reducer
     setFirstName(firstName) {
-        // State update are simple as assigning a value to the state property thanks to Immer
+        // State updates are simple as assigning a value to
+        // the draftState property thanks to Immer
         this.draftState.firstName = firstName;
     }
 
