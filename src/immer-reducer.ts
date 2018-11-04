@@ -2,28 +2,36 @@ import produce, {Draft} from "immer";
 
 const PREFIX = "IMMER_REDUCER";
 
+/** get function arguments as tuple type */
 type ArgumentsType<T> = T extends (...args: infer V) => any ? V : never;
 
+/** Get union of function property names */
 type FunctionPropertyNames<T> = {
     [K in keyof T]: T[K] extends Function ? K : never
 }[keyof T];
 
+/** Pick only methods from object */
 type Methods<T> = Pick<T, FunctionPropertyNames<T>>;
 
+/** flatten functions in an object to their return values */
 type FlattenToReturnTypes<T extends {[key: string]: () => any}> = {
     [K in keyof T]: ReturnType<T[K]>
 };
 
+/** get union of object value types */
 type ObjectValueTypes<T> = T[keyof T];
 
+/** get union of object method return types */
 type ReturnTypeUnion<T extends {[key: string]: () => any}> = ObjectValueTypes<
     FlattenToReturnTypes<T>
 >;
 
+/** type constrant for the ImmerReducer class  */
 export interface ImmerReducerClass {
     new (...args: any[]): ImmerReducer<any>;
 }
 
+/** get state type from a ImmerReducer subclass */
 type ImmerReducerState<T> = T extends {
     prototype: {
         state: infer V;
@@ -32,6 +40,15 @@ type ImmerReducerState<T> = T extends {
     ? V
     : never;
 
+/** generate reducer function type form the ImmerReducer class */
+interface ImmerReducerFunction<T extends ImmerReducerClass> {
+    (
+        state: ImmerReducerState<T> | undefined,
+        action: ReturnTypeUnion<ActionCreators<T>>,
+    ): ImmerReducerState<T> | undefined;
+}
+
+/** generate ActionCreators types from the ImmerReducer class */
 export type ActionCreators<ClassActions extends ImmerReducerClass> = {
     [K in keyof Methods<InstanceType<ClassActions>>]: (
         ...args: ArgumentsType<InstanceType<ClassActions>[K]>
@@ -41,9 +58,10 @@ export type ActionCreators<ClassActions extends ImmerReducerClass> = {
     }
 };
 
+/** The actual ImmerReducer class */
 export class ImmerReducer<T> {
     readonly state: T;
-    readonly draftState: Draft<T>;
+    readonly draftState: Draft<T>; // Make read only states mutable using Draft
 
     constructor(draftState: Draft<T>, state: T) {
         this.state = state;
@@ -78,14 +96,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
         };
     });
 
-    return actionCreators as any;
-}
-
-interface ImmerReducerFunction<T extends ImmerReducerClass> {
-    (
-        state: ImmerReducerState<T> | undefined,
-        action: ReturnTypeUnion<ActionCreators<T>>,
-    ): ImmerReducerState<T> | undefined;
+    return actionCreators as any; // typed in the function signature
 }
 
 export function createReducerFunction<T extends ImmerReducerClass>(
