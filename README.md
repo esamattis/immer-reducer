@@ -15,9 +15,11 @@ Typescript [friendly](#100-type-safety-with-typescript) too.
 Reducers are defined by extending from the `ImmerReducer` class
 
 ```js
-import {ImmerReducer, createActionCreators} from "immer-reducer";
+import {ImmerReducer} from "immer-reducer";
 
+// The class represents the classic switch-case reducer
 class MyImmerReducer extends ImmerReducer {
+
     // each method becomes an Action Creator
     setFirstName(firstName) {
         // State updates are simple as assigning a value to
@@ -29,7 +31,7 @@ class MyImmerReducer extends ImmerReducer {
         this.draftState.lastName = lastName;
     }
 
-    // You can combine methods to single Action Creator
+    // You can combine methods to a single Action Creator
     setName(firstName, lastName) {
         this.setFirstName(firstName);
         this.setLastName(firstName);
@@ -46,7 +48,7 @@ const ActionCreators = createActionCreators(MyImmerReducer);
 const reducerFunction = createReducerFunction(MyImmerReducer);
 ```
 
-and create a Redux store
+and create the Redux store
 
 ```js
 import {createStore} from "redux";
@@ -82,10 +84,10 @@ Under the hood the class is desconstructed to following actions:
 }
 ```
 
-So the method names becomes Redux Action Types and the method arguments
-becomes the action payload. The reducer function will then match these
+So the method names become the Redux Action Types and the method arguments
+become the action payloads. The reducer function will then match these
 actions against the class and calls the approciate methods with the payload
-spread to the arguments. But do note that the action format is not part of
+array spread to the arguments. But do note that the action format is not part of
 the public API so don't write any code relying on it. The actions are handled
 by the generated reducer function.
 
@@ -124,7 +126,7 @@ class MyImmerReducer extends ImmerReducer<State> {
 }
 ```
 
-The generated ActionsTypes object now respects the types used in the class
+The generated `ActionsTypes` object now respects the types used in the class
 
 ```ts
 const ActionCreators = createActionCreators(MyImmerReducer);
@@ -148,6 +150,8 @@ reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
 reducer(initialState, {type: "WAT"}); // Type error
 reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
 ```
+
+## Type Safe connect()?
 
 If you enjoy this then also checkout
 [redux-render-prop](https://github.com/epeli/redux-render-prop) for type safe
