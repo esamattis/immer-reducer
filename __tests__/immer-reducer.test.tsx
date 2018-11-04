@@ -108,6 +108,38 @@ test("the actual action type name is prefixed", () => {
     );
 });
 
+test("can add helpers to the class", () => {
+    const initialState = {foo: 1, bar: 1};
+
+    class Helper {
+        state: typeof initialState;
+
+        constructor(state: typeof initialState) {
+            this.state = state;
+        }
+
+        getCombined() {
+            return this.state.foo + this.state.bar;
+        }
+    }
+
+    class TestReducer extends ImmerReducer<typeof initialState> {
+        helper = new Helper(this.state);
+
+        combineToBar() {
+            this.draftState.bar = this.helper.getCombined();
+        }
+    }
+
+    const ActionCreators = createActionCreators(TestReducer);
+    const reducer = createReducerFunction(TestReducer);
+    const store = createStore(reducer, initialState);
+
+    store.dispatch(ActionCreators.combineToBar());
+
+    expect(store.getState()).toEqual({foo: 1, bar: 2});
+});
+
 // test("allow custom action type name", () => {
 //     const initialState = {foo: "bar"};
 
