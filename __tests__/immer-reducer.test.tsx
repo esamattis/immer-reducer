@@ -98,9 +98,9 @@ test("the actual action type name is prefixed", () => {
     const ActionCreators = createActionCreators(TestReducer);
 
     const reducer = createReducerFunction(TestReducer);
-    const reducerSpy = jest.fn(reducer);
+    const reducerSpy: typeof reducer = jest.fn(reducer);
 
-    const store = createStore(reducerSpy as typeof reducer, initialState);
+    const store = createStore(reducerSpy, initialState);
 
     store.dispatch(ActionCreators.setFoo("next"));
 
