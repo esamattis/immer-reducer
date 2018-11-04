@@ -86,7 +86,7 @@ test("can update state using mutiple methods", () => {
     expect(store.getState()).toEqual({foo: "next", bar: 2});
 });
 
-test("action type name", () => {
+test("the actual action type name is prefixed", () => {
     const initialState = {foo: "bar"};
 
     class TestReducer extends ImmerReducer<typeof initialState> {
