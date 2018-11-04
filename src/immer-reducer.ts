@@ -1,4 +1,4 @@
-import {Draft} from "immer";
+import produce, {Draft} from "immer";
 
 type ArgumentsType<T> = T extends (...args: infer V) => any ? V : never;
 
@@ -52,21 +52,55 @@ export class ImmerReducer<T> {
 export function createActionCreators<T extends ImmerReducerClass>(
     immerReducerClass: T,
 ): ActionCreators<T> {
-    const foo = new immerReducerClass();
+    const creators: {[key: string]: Function} = {};
 
-    return {} as any;
+    Object.keys(immerReducerClass.prototype).forEach(key => {
+        const method = immerReducerClass.prototype[key];
+
+        if (typeof method !== "function") {
+            return;
+        }
+
+        creators[key] = (...args: any[]) => {
+            return {
+                type: key,
+                payload: args,
+            };
+        };
+    });
+
+    return creators as any;
 }
 
 interface ImmerReducerFunction<T extends ImmerReducerClass> {
     (
         state: ImmerReducerState<T> | undefined,
         action: ReturnTypeUnion<ActionCreators<T>>,
-    ): ImmerReducerState<T>;
+    ): ImmerReducerState<T> | undefined;
 }
 
 export function createReducerFunction<T extends ImmerReducerClass>(
     immerReducerClass: T,
 ): ImmerReducerFunction<T> {
-    const foo = new immerReducerClass();
-    return {} as any;
+    return function immerReducerFunction(state, action) {
+        const methodKey = action.type;
+
+        if (typeof immerReducerClass.prototype[methodKey] !== "function") {
+            return state;
+        }
+
+        if (!state) {
+            throw new Error(
+                "ImmerReducer does not support undefined state. Pass initial state to createStore()",
+            );
+        }
+
+        return produce(state as any, draftState => {
+            const reducers: any = new immerReducerClass(draftState, state);
+
+            reducers[methodKey](...action.payload);
+
+            return draftState;
+        });
+    };
 }
