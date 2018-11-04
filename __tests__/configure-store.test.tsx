@@ -2,7 +2,7 @@ import React from "react";
 import {Provider} from "react-redux";
 
 import {configureStore} from "../src/configure-store";
-import {ImmerReducer} from "../lib/immer-reducer";
+import {ImmerReducer} from "../src/immer-reducer";
 import {
     createReducerFunction,
     createActionCreators,

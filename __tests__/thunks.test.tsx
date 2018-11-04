@@ -1,7 +1,7 @@
 import {makeThunkCreator} from "../src/create-thunks";
 
 import {configureStore} from "../src/configure-store";
-import {ImmerReducer} from "../lib/immer-reducer";
+import {ImmerReducer} from "../src/immer-reducer";
 import {createReducerFunction, createActionCreators} from "../src";
 
 const wait = (t: number) => new Promise(r => setTimeout(r, t));
