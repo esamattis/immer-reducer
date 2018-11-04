@@ -2,7 +2,7 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/epeli/immer-reducer.svg)](https://greenkeeper.io/)
 
-Create (type safe) Redux reducers using [Immer](https://github.com/mweststrate/immer)!
+Create Redux reducers using [Immer](https://github.com/mweststrate/immer)! [Typescript friendly](#100-type-safety-with-typescript).
 
 ## Install
 
@@ -89,11 +89,11 @@ by the generated reducer function.
 The generated reducer function executes the methods inside the `produce()`
 function of Immer enabling the terse mutatable style updates.
 
-# 100% Type Safety With Typescript
+# 100% Type Safety with Typescript
 
 This library by no means requires you to use Typescript but it was written
-spesifically Typescript usage in mind because I was unable to find any other
-libraries that are both boilerplate free and 100% type safe.
+specifically Typescript usage in mind because I was unable to find any other
+libraries that make Redux usage both boilerplate free and 100% type safe.
 
 The Typescript usage does not differ that much from the Javascript usage.
 Just pass your state type as the type argument for the class
