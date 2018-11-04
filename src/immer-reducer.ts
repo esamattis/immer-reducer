@@ -59,7 +59,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
 
 interface ImmerReducerFunction<T extends ImmerReducerClass> {
     (
-        state: ImmerReducerState<T>,
+        state: ImmerReducerState<T> | undefined,
         action: ReturnTypeUnion<ActionCreators<T>>,
     ): ImmerReducerState<T>;
 }
