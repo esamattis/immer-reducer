@@ -56,7 +56,7 @@ export function configureStore<State>(options: {
     reducers?: (MyReducer<State>)[];
     middleware?: any[];
     devTools?: boolean;
-    preloadedState?: State;
+    preloadedState: State;
     enhancers?: any[];
 }) {
     const {

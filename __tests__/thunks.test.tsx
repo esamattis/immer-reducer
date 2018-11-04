@@ -1,18 +1,21 @@
 import {makeThunkCreator} from "../src/create-thunks";
 
-import {createSimpleActions, createReducer} from "../src/create-simple-actions";
 import {configureStore} from "../src/configure-store";
+import {ImmerReducer} from "../lib/immer-reducer";
+import {createReducerFunction, createActionCreators} from "../src";
 
 const wait = (t: number) => new Promise(r => setTimeout(r, t));
 
 test("thunks work", () => {
     const initialState = {foo: "bar"};
 
-    const SimpleActions = createSimpleActions(initialState, {
-        setFoo(state, action: {foo: string}) {
-            return {...state, foo: action.foo};
-        },
-    });
+    class FooImmerReducer extends ImmerReducer<typeof initialState> {
+        setFoo(action: {foo: string}) {
+            this.draftState.foo = action.foo;
+        }
+    }
+
+    const FooActionCreators = createActionCreators(FooImmerReducer);
 
     const createThunk = makeThunkCreator(store => ({
         getState: () => store.getState() as typeof initialState,
@@ -20,14 +23,17 @@ test("thunks work", () => {
     }));
 
     const myThunk = createThunk((foo: number, bar: string) => store => {
-        store.dispatch(SimpleActions.setFoo({foo: "from thunk " + foo + bar}));
+        store.dispatch(
+            FooActionCreators.setFoo({foo: "from thunk " + foo + bar}),
+        );
 
         // just type testing
         const fromStoreFoo: string = store.getState().foo;
     });
 
     const store = configureStore({
-        reducer: createReducer(SimpleActions),
+        reducer: createReducerFunction(FooImmerReducer),
+        preloadedState: initialState,
     });
 
     const ret = myThunk(3, "more");
@@ -41,11 +47,13 @@ test("thunks can call other thunks", async () => {
     const initialState = {foo: "bar"};
     const thunkSpy = jest.fn();
 
-    const SimpleActions = createSimpleActions(initialState, {
-        setFoo(state, action: {foo: string}) {
-            return {...state, foo: action.foo};
-        },
-    });
+    class FooImmerReducer extends ImmerReducer<typeof initialState> {
+        setFoo(action: {foo: string}) {
+            this.draftState.foo = action.foo;
+        }
+    }
+
+    const FooActionCreators = createActionCreators(FooImmerReducer);
 
     const createThunk = makeThunkCreator(store => ({
         dispatch: store.dispatch,
@@ -53,7 +61,7 @@ test("thunks can call other thunks", async () => {
 
     const myThunk = createThunk((boo: number) => {
         return async store => {
-            store.dispatch(SimpleActions.setFoo({foo: "first"}));
+            store.dispatch(FooActionCreators.setFoo({foo: "first"}));
             thunkSpy();
             await store.dispatch(slowThunk());
         };
@@ -63,12 +71,13 @@ test("thunks can call other thunks", async () => {
         return async store => {
             await wait(50);
             thunkSpy();
-            store.dispatch(SimpleActions.setFoo({foo: "slow"}));
+            store.dispatch(FooActionCreators.setFoo({foo: "slow"}));
         };
     });
 
     const store = configureStore({
-        reducer: createReducer(SimpleActions),
+        reducer: createReducerFunction(FooImmerReducer),
+        preloadedState: initialState,
     });
     store.dispatch(myThunk(3));
 
@@ -85,18 +94,20 @@ test("thunk dispatch returns correct types", async () => {
     const initialState = {foo: "bar"};
     const thunkSpy = jest.fn();
 
-    const SimpleActions = createSimpleActions(initialState, {
-        simple(state, action: {foo: string}) {
-            return {...state, foo: action.foo};
-        },
-    });
+    class FooImmerReducer extends ImmerReducer<typeof initialState> {
+        simple(action: {foo: string}) {
+            this.draftState.foo = action.foo;
+        }
+    }
+
+    const FooActionCreators = createActionCreators(FooImmerReducer);
 
     const createThunk = makeThunkCreator(store => ({
         dispatch: store.dispatch,
     }));
 
     const aThunk = createThunk(() => store => {
-        store.dispatch(SimpleActions.simple({foo: "slow"}));
+        store.dispatch(FooActionCreators.simple({foo: "slow"}));
 
         return "str";
     });
@@ -110,7 +121,7 @@ test("thunk dispatch returns correct types", async () => {
     const testThunk = createThunk(() => {
         return async store => {
             const simpleRet: void = store.dispatch(
-                SimpleActions.simple({foo: "dsf"}),
+                FooActionCreators.simple({foo: "dsf"}),
             );
             expect(simpleRet).toBe(undefined);
 
@@ -131,7 +142,8 @@ test("thunk dispatch returns correct types", async () => {
     });
 
     const store = configureStore({
-        reducer: createReducer(SimpleActions),
+        reducer: createReducerFunction(FooImmerReducer),
+        preloadedState: initialState,
     });
 
     store.dispatch(testThunk());

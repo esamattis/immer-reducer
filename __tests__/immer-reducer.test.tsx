@@ -1,8 +1,3 @@
-import React from "react";
-import {Provider} from "react-redux";
-
-import {createSimpleActions, createReducer} from "../src/create-simple-actions";
-import {configureStore} from "../src/configure-store";
 import {
     ImmerReducer,
     createReducerFunction,
