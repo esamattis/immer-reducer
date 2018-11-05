@@ -9,6 +9,5 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "esModuleInterop": true
-    },
-    "exclude": ["__dtslint__"]
+    }
 }
