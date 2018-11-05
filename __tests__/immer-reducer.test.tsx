@@ -3,7 +3,8 @@ import {
     createReducerFunction,
     createActionCreators,
 } from "../src/immer-reducer";
-import {createStore} from "redux";
+
+import {createStore, combineReducers} from "redux";
 
 test("can create reducers", () => {
     const initialState = {foo: "bar"};
@@ -153,4 +154,43 @@ test("can add helpers to the class", () => {
     store.dispatch(ActionCreators.combineToBar());
 
     expect(store.getState()).toEqual({foo: 1, bar: 2});
+});
+
+test("can use combineReducers", () => {
+    interface State1 {
+        foo: number;
+    }
+
+    interface State2 {
+        bar: string;
+    }
+
+    class TestReducer1 extends ImmerReducer<State1> {
+        setFoo(foo: number) {
+            this.draftState.foo = foo;
+        }
+    }
+
+    class TestReducer2 extends ImmerReducer<State2> {
+        setBar(bar: string) {
+            this.draftState.bar = bar;
+        }
+    }
+
+    const ActionCreators1 = createActionCreators(TestReducer1);
+    const ActionCreators2 = createActionCreators(TestReducer2);
+
+    const slice1 = createReducerFunction(TestReducer1, {foo: 0});
+    const slice2 = createReducerFunction(TestReducer2, {bar: ""});
+
+    const combined = combineReducers({slice1, slice2});
+
+    const store = createStore(combined);
+
+    store.dispatch(ActionCreators1.setFoo(1));
+    store.dispatch(ActionCreators2.setBar("barval"));
+
+    const state = store.getState();
+
+    expect(state).toEqual({slice1: {foo: 1}, slice2: {bar: "barval"}});
 });
