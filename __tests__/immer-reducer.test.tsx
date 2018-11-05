@@ -20,6 +20,21 @@ test("can create reducers", () => {
     expect(store.getState()).toEqual({foo: "bar"});
 });
 
+test("the reducer can return the initial state", () => {
+    const initialState = {foo: "bar"};
+
+    class TestReducer extends ImmerReducer<typeof initialState> {
+        setFoo(foo: string) {
+            this.draftState.foo = foo;
+        }
+    }
+
+    const reducer = createReducerFunction(TestReducer, initialState);
+    const store = createStore(reducer);
+
+    expect(store.getState()).toEqual({foo: "bar"});
+});
+
 test("can dispatch actions", () => {
     const initialState = {foo: "bar"};
 
