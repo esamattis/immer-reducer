@@ -105,8 +105,13 @@ export function createActionCreators<T extends ImmerReducerClass>(
 
 export function createReducerFunction<T extends ImmerReducerClass>(
     immerReducerClass: T,
+    initialState?: ImmerReducerState<T>,
 ): ImmerReducerFunction<T> {
     return function immerReducerFunction(state, action) {
+        if (state === undefined) {
+            state = initialState;
+        }
+
         if (!action.type.startsWith(PREFIX + ":")) {
             return state;
         }
