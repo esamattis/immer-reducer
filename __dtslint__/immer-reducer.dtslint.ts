@@ -66,11 +66,14 @@ createActionCreators(BadReducer);
 
 const reducer = createReducerFunction(MyReducer);
 
+// can create with proper initial state
+createReducerFunction(MyReducer, {foo: "", bar: 0});
+
 // Bad state argument is not allowed
 // $ExpectError
 createReducerFunction(MyReducer, {bad: "state"});
 
-const newState: State | undefined = reducer(
+const newState: State = reducer(
     {foo: "sdf", bar: 2},
     {
         type: "setBar",

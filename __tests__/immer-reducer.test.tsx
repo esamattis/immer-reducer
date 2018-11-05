@@ -190,7 +190,10 @@ test("can use combineReducers", () => {
     store.dispatch(ActionCreators1.setFoo(1));
     store.dispatch(ActionCreators2.setBar("barval"));
 
-    const state = store.getState();
+    const state: {
+        slice1: State1;
+        slice2: State2;
+    } = store.getState();
 
     expect(state).toEqual({slice1: {foo: 1}, slice2: {bar: "barval"}});
 });

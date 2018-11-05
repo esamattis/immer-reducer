@@ -45,7 +45,7 @@ interface ImmerReducerFunction<T extends ImmerReducerClass> {
     (
         state: ImmerReducerState<T> | undefined,
         action: ReturnTypeUnion<ActionCreators<T>>,
-    ): ImmerReducerState<T> | undefined;
+    ): ImmerReducerState<T>;
 }
 
 /** generate ActionCreators types from the ImmerReducer class */
