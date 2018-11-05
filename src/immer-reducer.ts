@@ -124,7 +124,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
 
         if (!state) {
             throw new Error(
-                "ImmerReducer does not support undefined state. Pass initial state to createStore()",
+                "ImmerReducer does not support undefined state. Pass initial state to createReducerFunction() or createStore()",
             );
         }
 
