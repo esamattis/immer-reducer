@@ -81,7 +81,11 @@ export function createActionCreators<T extends ImmerReducerClass>(
 ): ActionCreators<T> {
     const actionCreators: {[key: string]: Function} = {};
 
-    Object.keys(immerReducerClass.prototype).forEach(key => {
+    Object.getOwnPropertyNames(immerReducerClass.prototype).forEach(key => {
+        if (key === "constructor") {
+            return;
+        }
+
         const method = immerReducerClass.prototype[key];
 
         if (typeof method !== "function") {
