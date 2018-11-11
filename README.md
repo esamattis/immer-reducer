@@ -153,8 +153,8 @@ reducer(initialState, {type: "WAT"}); // Type error
 reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
 ```
 
-## Type Safe connect()?
+## Examples
 
-If you enjoy this then also checkout
-[redux-render-prop](https://github.com/epeli/redux-render-prop) for type safe
-`connect()` alternative.
+Here's a more complete example with [redux-render-prop](https://github.com/epeli/redux-render-prop):
+
+<https://github.com/epeli/typescript-redux-todoapp>
