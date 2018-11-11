@@ -6,6 +6,8 @@ Create Redux reducers using [Immer](https://github.com/mweststrate/immer)!
 
 Typescript [friendly](#100-type-safety-with-typescript) too.
 
+Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boilerplate-free-redux-906844ec6325).
+
 ## Install
 
     npm install immer-reducer
