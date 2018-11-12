@@ -94,7 +94,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
 
         actionCreators[key] = (...args: any[]) => {
             return {
-                type: PREFIX + ":" + key,
+                type: `${PREFIX}:${immerReducerClass.name}#${key}`,
                 payload: args,
             };
         };
@@ -116,9 +116,13 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             return state;
         }
 
-        const methodKey = removePrefix(action.type);
+        const [className, methodName] = removePrefix(action.type).split("#");
 
-        if (typeof immerReducerClass.prototype[methodKey] !== "function") {
+        if (className !== immerReducerClass.name) {
+            return state;
+        }
+
+        if (typeof immerReducerClass.prototype[methodName] !== "function") {
             return state;
         }
 
@@ -131,7 +135,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
         return produce(state as any, draftState => {
             const reducers: any = new immerReducerClass(draftState, state);
 
-            reducers[methodKey](...action.payload);
+            reducers[methodName](...action.payload);
 
             return draftState;
         });

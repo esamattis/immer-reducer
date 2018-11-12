@@ -6,6 +6,31 @@ import {
 
 import {createStore, combineReducers} from "redux";
 
+interface Reducer<State> {
+    (state: State, action: any): State;
+}
+
+/**
+ * Combine multiple reducers into a single one
+ *
+ * @param reducers two or more reducer
+ */
+function composeReducers<State>(
+    ...reducers: (Reducer<State | undefined>)[]
+): Reducer<State | undefined> {
+    return (state: any, action: any) => {
+        return (
+            reducers.reduce((state, subReducer) => {
+                if (typeof subReducer === "function") {
+                    return subReducer(state, action);
+                }
+
+                return state;
+            }, state) || state
+        );
+    };
+}
+
 test("can create reducers", () => {
     const initialState = {foo: "bar"};
 
@@ -119,7 +144,7 @@ test("the actual action type name is prefixed", () => {
         {foo: "bar"},
         {
             payload: ["next"],
-            type: "IMMER_REDUCER:setFoo",
+            type: "IMMER_REDUCER:TestReducer#setFoo",
         },
     );
 });
@@ -196,4 +221,36 @@ test("can use combineReducers", () => {
     } = store.getState();
 
     expect(state).toEqual({slice1: {foo: 1}, slice2: {bar: "barval"}});
+});
+
+test("cannot collide reducers", () => {
+    const initialState = {foo: "bar"};
+
+    class TestReducer1 extends ImmerReducer<typeof initialState> {
+        setFoo() {
+            this.draftState.foo = "1";
+        }
+    }
+
+    class TestReducer2 extends ImmerReducer<typeof initialState> {
+        setFoo() {
+            this.draftState.foo = "2";
+        }
+    }
+
+    const reducer = composeReducers(
+        createReducerFunction(TestReducer1),
+        createReducerFunction(TestReducer2),
+    );
+
+    const store = createStore(reducer, initialState);
+
+    const ActionCreators1 = createActionCreators(TestReducer1);
+    const ActionCreators2 = createActionCreators(TestReducer2);
+
+    store.dispatch(ActionCreators1.setFoo());
+    expect(store.getState()).toEqual({foo: "1"});
+
+    store.dispatch(ActionCreators2.setFoo());
+    expect(store.getState()).toEqual({foo: "2"});
 });

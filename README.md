@@ -21,7 +21,6 @@ import {ImmerReducer} from "immer-reducer";
 
 // The class represents the classic switch-case reducer
 class MyImmerReducer extends ImmerReducer {
-
     // each method becomes an Action Creator
     setFirstName(firstName) {
         // State updates are simple as assigning a value to
@@ -77,11 +76,11 @@ Under the hood the class is desconstructed to following actions:
 
 ```js
 {
-    type: "IMMER_REDUCER:setFirstName",
+    type: "IMMER_REDUCER:MyImmerReducer#setFirstName",
     payload: ["Charlie"],
 }
 {
-    type: "IMMER_REDUCER:setLastName",
+    type: "IMMER_REDUCER:MyImmerReducer#setLastName",
     payload: ["Brown"],
 }
 ```
