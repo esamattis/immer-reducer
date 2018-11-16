@@ -60,6 +60,7 @@ export type ActionCreators<ClassActions extends ImmerReducerClass> = {
 
 /** The actual ImmerReducer class */
 export class ImmerReducer<T> {
+    static customName?: string;
     readonly state: T;
     readonly draftState: Draft<T>; // Make read only states mutable using Draft
 
@@ -94,13 +95,17 @@ export function createActionCreators<T extends ImmerReducerClass>(
 
         actionCreators[key] = (...args: any[]) => {
             return {
-                type: `${PREFIX}:${immerReducerClass.name}#${key}`,
+                type: `${PREFIX}:${getReducerName(immerReducerClass)}#${key}`,
                 payload: args,
             };
         };
     });
 
     return actionCreators as any; // typed in the function signature
+}
+
+function getReducerName(klass: {name: string; customName?: string}) {
+    return klass.customName || klass.name;
 }
 
 export function createReducerFunction<T extends ImmerReducerClass>(
@@ -118,7 +123,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
 
         const [className, methodName] = removePrefix(action.type).split("#");
 
-        if (className !== immerReducerClass.name) {
+        if (className !== getReducerName(immerReducerClass)) {
             return state;
         }
 
