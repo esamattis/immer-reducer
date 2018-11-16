@@ -5,7 +5,7 @@ import {
     ImmerReducerState,
 } from "../src/immer-reducer";
 
-interface Bad {
+interface AssignFail {
     ___: "it should not be possible to assign to me";
 }
 
@@ -53,9 +53,9 @@ const state_test_2: State["foo"] = ins.draftState;
 
 // cannot assign to wrong state (ie. was not any)
 // $ExpectError
-const state_test_3: Bad = ins.state;
+const state_test_3: AssignFail = ins.state;
 // $ExpectError
-const state_test_4: Bad = ins.draftState;
+const state_test_4: AssignFail = ins.draftState;
 
 //////////////////////////
 // Action Creator tests //
@@ -104,4 +104,4 @@ type InferredState = ImmerReducerState<typeof ReducerClassFoo>;
 declare const inferredState: InferredState;
 
 // XXX! Should fail too!
-const anumber: Bad = inferredState;
+const anumber: AssignFail = inferredState;

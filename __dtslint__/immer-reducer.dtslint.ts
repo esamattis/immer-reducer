@@ -4,7 +4,7 @@ import {
     createReducerFunction,
 } from "../src/immer-reducer";
 
-interface Bad {
+interface AssignFail {
     ___: "it should not be possible to assign to me";
 }
 
@@ -42,7 +42,7 @@ const action: {
 
 // the action creator does no return any
 // $ExpectError
-const is_not_any: Bad = ActionCreators.setBar(3);
+const is_not_any: AssignFail = ActionCreators.setBar(3);
 
 // actions without payload
 ActionCreators.setFooStatic();
@@ -91,7 +91,7 @@ const newState: State = reducer(
 
 // reducer does not return any
 // $ExpectError
-const no_any_state: Bad = reducer(
+const no_any_state: AssignFail = reducer(
     {foo: "f", bar: 2},
     {
         type: "setBar",
