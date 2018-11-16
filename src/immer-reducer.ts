@@ -117,11 +117,28 @@ export function createReducerFunction<T extends ImmerReducerClass>(
     immerReducerClass: T,
     initialState?: ImmerReducerState<T>,
 ): ImmerReducerFunction<T> {
+    const duplicateCustomName =
+        immerReducerClass.customName &&
+        KNOWN_REDUCES_CLASSES.find(klass =>
+            Boolean(
+                klass.customName &&
+                    klass.customName === immerReducerClass.customName,
+            ),
+        );
+
+    if (duplicateCustomName) {
+        throw new Error(
+            `There is already customName ${
+                immerReducerClass.customName
+            } defined for ${duplicateCustomName.name}`,
+        );
+    }
+
     const duplicate = KNOWN_REDUCES_CLASSES.find(
-        klass => getReducerName(klass) === getReducerName(immerReducerClass),
+        klass => klass.name === immerReducerClass.name,
     );
 
-    if (duplicate) {
+    if (duplicate && !duplicate.customName) {
         let number = DUPLICATE_INCREMENTS[immerReducerClass.name];
 
         if (number) {
@@ -129,6 +146,8 @@ export function createReducerFunction<T extends ImmerReducerClass>(
         } else {
             number = 1;
         }
+
+        DUPLICATE_INCREMENTS[immerReducerClass.name] = number;
 
         immerReducerClass.customName = immerReducerClass.name + "_" + number;
     }
@@ -171,7 +190,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
 }
 
 /**
- * DO NOT USE! This is only for tests!
+ * INTERNAL! This is only for tests!
  */
 export function _clearKnownClasses() {
     KNOWN_REDUCES_CLASSES = [];

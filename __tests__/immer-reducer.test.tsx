@@ -291,3 +291,25 @@ test("dynamically generated reducers do not collide", () => {
     store.dispatch(ActionCreators2.set());
     expect(store.getState().foo).toEqual("2");
 });
+
+test("throw error when using duplicate customNames", () => {
+    class Reducer1 extends ImmerReducer<{foo: string}> {
+        static customName = "dup";
+        set() {
+            this.draftState.foo = "foo";
+        }
+    }
+
+    class Reducer2 extends ImmerReducer<{foo: string}> {
+        static customName = "dup";
+        set() {
+            this.draftState.foo = "foo";
+        }
+    }
+
+    createReducerFunction(Reducer1);
+
+    expect(() => {
+        createReducerFunction(Reducer2);
+    }).toThrow();
+});
