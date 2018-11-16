@@ -5,6 +5,10 @@ import {
     ImmerReducerState,
 } from "../src/immer-reducer";
 
+interface Bad {
+    ___: "it should not be possible to assign to me";
+}
+
 interface State {
     foo: {
         fooField1: string;
@@ -38,20 +42,20 @@ function createGenericReducer<T extends {[key: string]: unknown}>() {
 const ReducerClassFoo = createGenericReducer<State["foo"]>();
 const ReducerClassBar = createGenericReducer<State["bar"]>();
 
-const ins = new ReducerClassFoo(initialState.foo, initialState.foo);
-
 ////////////////////
 // Instance tests //
 ////////////////////
+
+const ins = new ReducerClassFoo(initialState.foo, initialState.foo);
 
 const state_test_1: State["foo"] = ins.state;
 const state_test_2: State["foo"] = ins.draftState;
 
 // cannot assign to wrong state (ie. was not any)
 // $ExpectError
-const state_test_3: string = ins.state;
+const state_test_3: Bad = ins.state;
 // $ExpectError
-const state_test_4: number = ins.draftState;
+const state_test_4: Bad = ins.draftState;
 
 //////////////////////////
 // Action Creator tests //
@@ -100,4 +104,4 @@ type InferredState = ImmerReducerState<typeof ReducerClassFoo>;
 declare const inferredState: InferredState;
 
 // XXX! Should fail too!
-const anumber: number = inferredState;
+const anumber: Bad = inferredState;
