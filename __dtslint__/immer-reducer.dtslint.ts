@@ -4,6 +4,10 @@ import {
     createReducerFunction,
 } from "../src/immer-reducer";
 
+interface Bad {
+    ___: "it should not be possible to assign to me";
+}
+
 interface State {
     readonly foo: string;
     readonly bar: number;
@@ -36,13 +40,17 @@ const action: {
     payload: [number];
 } = ActionCreators.setBar(3);
 
+// the action creator does no return any
+// $ExpectError
+const is_not_any: Bad = ActionCreators.setBar(3);
+
 // actions without payload
 ActionCreators.setFooStatic();
 
 // Actions with multiple items in the payload
 ActionCreators.setBoth("foo", 1);
 
-// Only function properties is picked
+// Only function properties are picked
 // $ExpectError
 ActionCreators.draftState;
 // $ExpectError
@@ -75,6 +83,16 @@ createReducerFunction(MyReducer, {bad: "state"});
 
 const newState: State = reducer(
     {foo: "sdf", bar: 2},
+    {
+        type: "setBar",
+        payload: [3],
+    },
+);
+
+// reducer does not return any
+// $ExpectError
+const no_any_state: Bad = reducer(
+    {foo: "f", bar: 2},
     {
         type: "setBar",
         payload: [3],
