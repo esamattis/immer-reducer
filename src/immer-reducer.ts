@@ -28,6 +28,7 @@ type ReturnTypeUnion<T extends {[key: string]: () => any}> = ObjectValueTypes<
 
 /** type constrant for the ImmerReducer class  */
 export interface ImmerReducerClass {
+    customName?: string;
     new (...args: any[]): ImmerReducer<any>;
 }
 
@@ -108,10 +109,32 @@ function getReducerName(klass: {name: string; customName?: string}) {
     return klass.customName || klass.name;
 }
 
+let KNOWN_REDUCES_CLASSES: typeof ImmerReducer[] = [];
+
+const DUPLICATE_INCREMENTS: {[name: string]: number | undefined} = {};
+
 export function createReducerFunction<T extends ImmerReducerClass>(
     immerReducerClass: T,
     initialState?: ImmerReducerState<T>,
 ): ImmerReducerFunction<T> {
+    const duplicate = KNOWN_REDUCES_CLASSES.find(
+        klass => getReducerName(klass) === getReducerName(immerReducerClass),
+    );
+
+    if (duplicate) {
+        let number = DUPLICATE_INCREMENTS[immerReducerClass.name];
+
+        if (number) {
+            number++;
+        } else {
+            number = 1;
+        }
+
+        immerReducerClass.customName = immerReducerClass.name + "_" + number;
+    }
+
+    KNOWN_REDUCES_CLASSES.push(immerReducerClass);
+
     return function immerReducerFunction(state, action) {
         if (state === undefined) {
             state = initialState;
@@ -145,4 +168,11 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             return draftState;
         });
     };
+}
+
+/**
+ * DO NOT USE! This is only for tests!
+ */
+export function _clearKnownClasses() {
+    KNOWN_REDUCES_CLASSES = [];
 }

@@ -2,6 +2,7 @@ import {
     ImmerReducer,
     createReducerFunction,
     createActionCreators,
+    _clearKnownClasses,
 } from "../src/immer-reducer";
 
 import {createStore, combineReducers} from "redux";
@@ -9,6 +10,8 @@ import {createStore, combineReducers} from "redux";
 interface Reducer<State> {
     (state: State, action: any): State;
 }
+
+beforeEach(_clearKnownClasses);
 
 /**
  * Combine multiple reducers into a single one
@@ -253,4 +256,38 @@ test("cannot collide reducers", () => {
 
     store.dispatch(ActionCreators2.setFoo());
     expect(store.getState()).toEqual({foo: "2"});
+});
+
+test("dynamically generated reducers do not collide", () => {
+    const initialState = {
+        foo: "",
+    };
+
+    function createGenericReducer<T extends {[key: string]: unknown}>(
+        value: string,
+    ) {
+        return class GenericReducer extends ImmerReducer<T> {
+            set() {
+                Object.assign(this.draftState, {foo: value});
+            }
+        };
+    }
+    const ReducerClass1 = createGenericReducer<typeof initialState>("1");
+    const ReducerClass2 = createGenericReducer<typeof initialState>("2");
+
+    const reducer1 = createReducerFunction(ReducerClass1, initialState);
+    const reducer2 = createReducerFunction(ReducerClass2, initialState);
+
+    const reducer = composeReducers(reducer1, reducer2);
+
+    const ActionCreators1 = createActionCreators(ReducerClass1);
+    const ActionCreators2 = createActionCreators(ReducerClass2);
+
+    const store = createStore(reducer);
+
+    store.dispatch(ActionCreators1.set());
+    expect(store.getState().foo).toEqual("1");
+
+    store.dispatch(ActionCreators2.set());
+    expect(store.getState().foo).toEqual("2");
 });
