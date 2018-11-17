@@ -35,7 +35,7 @@ class MyImmerReducer extends ImmerReducer {
     // You can combine methods to a single Action Creator
     setName(firstName, lastName) {
         this.setFirstName(firstName);
-        this.setLastName(firstName);
+        this.setLastName(lastName);
     }
 }
 ```
