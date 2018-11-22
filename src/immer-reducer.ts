@@ -49,14 +49,22 @@ interface ImmerReducerFunction<T extends ImmerReducerClass> {
     ): ImmerReducerState<T>;
 }
 
+/** ActionCreator function interface with actual action type name */
+interface ActionCreator<ActionTypeType, Payload extends any[]> {
+    readonly type: ActionTypeType;
+
+    (...args: Payload): {
+        type: ActionTypeType;
+        payload: Payload;
+    };
+}
+
 /** generate ActionCreators types from the ImmerReducer class */
 export type ActionCreators<ClassActions extends ImmerReducerClass> = {
-    [K in keyof Methods<InstanceType<ClassActions>>]: (
-        ...args: ArgumentsType<InstanceType<ClassActions>[K]>
-    ) => {
-        type: K;
-        payload: ArgumentsType<InstanceType<ClassActions>[K]>;
-    }
+    [K in keyof Methods<InstanceType<ClassActions>>]: ActionCreator<
+        K,
+        ArgumentsType<InstanceType<ClassActions>[K]>
+    >
 };
 
 /** The actual ImmerReducer class */
@@ -94,12 +102,15 @@ export function createActionCreators<T extends ImmerReducerClass>(
             return;
         }
 
-        actionCreators[key] = (...args: any[]) => {
+        const type = `${PREFIX}:${getReducerName(immerReducerClass)}#${key}`;
+        const actionCreator = (...args: any[]) => {
             return {
-                type: `${PREFIX}:${getReducerName(immerReducerClass)}#${key}`,
+                type,
                 payload: args,
             };
         };
+        actionCreator.type = type;
+        actionCreators[key] = actionCreator;
     });
 
     return actionCreators as any; // typed in the function signature
