@@ -146,3 +146,6 @@ const OtherActionCreators = createActionCreators(OtherReducer);
 // Mixed reducer and action creators from different ImmerReducer classes
 // $ExpectError
 reducer({foo: "sdf", bar: 2}, OtherActionCreators.setDing("sdf"));
+
+// Action creator provides action type
+const actionType: "setBar" = ActionCreators.setBar.type;
