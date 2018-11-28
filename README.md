@@ -21,6 +21,7 @@ import {ImmerReducer} from "immer-reducer";
 
 // The class represents the classic switch-case reducer
 class MyImmerReducer extends ImmerReducer {
+
     // each method becomes an Action Creator
     setFirstName(firstName) {
         // State updates are simple as assigning a value to
