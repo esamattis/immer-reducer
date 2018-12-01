@@ -73,7 +73,7 @@ expect(store.getState().firstName).toEqual("Charlie");
 expect(store.getState().lastName).toEqual("Brown");
 ```
 
-Under the hood the class is desconstructed to following actions:
+Under the hood the class is deconstructed to following actions:
 
 ```js
 {
@@ -88,10 +88,30 @@ Under the hood the class is desconstructed to following actions:
 
 So the method names become the Redux Action Types and the method arguments
 become the action payloads. The reducer function will then match these
-actions against the class and calls the approciate methods with the payload
+actions against the class and calls the appropriate methods with the payload
 array spread to the arguments. But do note that the action format is not part of
 the public API so don't write any code relying on it. The actions are handled
 by the generated reducer function.
+
+If there is a need for some reason to access to the action type name, for example to 
+integrate with side effects libraries such as [redux-observable](https://github.com/redux-observable/redux-observable/) or [redux-saga](https://github.com/redux-saga/redux-saga),
+you can access it using `type` property of the action creator function:
+```ts
+// Get the action name to subscribe to
+const setFirstNameActionTypeName = ActionCreators.setFirstName.type;
+
+// Get the action type to have a type safe Epic
+type SetFirstNameAction = typeof ReturnType<ActionCreators.setFirstName>;
+
+const setFirstNameEpic: Epic<SetFirstNameAction> = action$ => 
+  action$
+    .ofType(setFirstNameActionTypeName)
+    .pipe(
+      // action.payload - recognized as string
+      map(action => action.payload.toUpperCase()),
+      ...
+    );
+```
 
 The generated reducer function executes the methods inside the `produce()`
 function of Immer enabling the terse mutatable style updates.
