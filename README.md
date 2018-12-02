@@ -21,7 +21,6 @@ import {ImmerReducer} from "immer-reducer";
 
 // The class represents the classic switch-case reducer
 class MyImmerReducer extends ImmerReducer {
-
     // each method becomes an Action Creator
     setFirstName(firstName) {
         // State updates are simple as assigning a value to
@@ -89,21 +88,29 @@ Under the hood the class is deconstructed to following actions:
 So the method names become the Redux Action Types and the method arguments
 become the action payloads. The reducer function will then match these
 actions against the class and calls the appropriate methods with the payload
-array spread to the arguments. But do note that the action format is not part of
-the public API so don't write any code relying on it. The actions are handled
-by the generated reducer function.
+array spread to the arguments. But do note that the action format is not part
+of the public API so don't write any code relying on it. The actions are
+handled by the generated reducer function.
 
-If there is a need for some reason to access to the action type name, for example to 
-integrate with side effects libraries such as [redux-observable](https://github.com/redux-observable/redux-observable/) or [redux-saga](https://github.com/redux-saga/redux-saga),
-you can access it using `type` property of the action creator function:
+The generated reducer function executes the methods inside the `produce()`
+function of Immer enabling the terse mutatable style updates.
+
+# Integrating with the Redux ecosystem
+
+To integrate for example with the side effects libraries such as
+[redux-observable](https://github.com/redux-observable/redux-observable/) and
+[redux-saga](https://github.com/redux-saga/redux-saga), you can access the
+generated action type using the `type` property of the action creator
+function:
+
 ```ts
 // Get the action name to subscribe to
 const setFirstNameActionTypeName = ActionCreators.setFirstName.type;
 
 // Get the action type to have a type safe Epic
-type SetFirstNameAction = typeof ReturnType<ActionCreators.setFirstName>;
+type SetFirstNameAction = ReturnType<typeof ActionCreators.setFirstName>;
 
-const setFirstNameEpic: Epic<SetFirstNameAction> = action$ => 
+const setFirstNameEpic: Epic<SetFirstNameAction> = action$ =>
   action$
     .ofType(setFirstNameActionTypeName)
     .pipe(
@@ -112,9 +119,6 @@ const setFirstNameEpic: Epic<SetFirstNameAction> = action$ =>
       ...
     );
 ```
-
-The generated reducer function executes the methods inside the `produce()`
-function of Immer enabling the terse mutatable style updates.
 
 # 100% Type Safety with Typescript
 
