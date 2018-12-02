@@ -313,3 +313,19 @@ test("throw error when using duplicate customNames", () => {
         createReducerFunction(Reducer2);
     }).toThrow();
 });
+
+test("action creators expose the actual action type name", () => {
+    const initialState = {foo: "bar"};
+
+    class TestReducer extends ImmerReducer<typeof initialState> {
+        setBar(foo: string) {
+            this.draftState.foo = foo;
+        }
+    }
+
+    const ActionCreators = createActionCreators(TestReducer);
+
+    expect(ActionCreators.setBar.type).toEqual(
+        "IMMER_REDUCER:TestReducer#setBar",
+    );
+});
