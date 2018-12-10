@@ -26,7 +26,7 @@ type ReturnTypeUnion<T extends {[key: string]: () => any}> = ObjectValueTypes<
     FlattenToReturnTypes<T>
 >;
 
-/** type constrant for the ImmerReducer class  */
+/** type constraint for the ImmerReducer class  */
 export interface ImmerReducerClass {
     customName?: string;
     new (...args: any[]): ImmerReducer<any>;
@@ -41,7 +41,7 @@ export type ImmerReducerState<T> = T extends {
     ? V
     : never;
 
-/** generate reducer function type form the ImmerReducer class */
+/** generate reducer function type from the ImmerReducer class */
 interface ImmerReducerFunction<T extends ImmerReducerClass> {
     (
         state: ImmerReducerState<T> | undefined,
