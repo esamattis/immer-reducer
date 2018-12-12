@@ -8,7 +8,7 @@ import {
 import {createStore, combineReducers} from "redux";
 
 interface Reducer<State> {
-    (state: State, action: any): State;
+    (state: State | undefined, action: any): State;
 }
 
 beforeEach(_clearKnownClasses);
@@ -20,7 +20,7 @@ beforeEach(_clearKnownClasses);
  */
 function composeReducers<State>(
     ...reducers: (Reducer<State | undefined>)[]
-): Reducer<State | undefined> {
+): Reducer<State> {
     return (state: any, action: any) => {
         return (
             reducers.reduce((state, subReducer) => {
