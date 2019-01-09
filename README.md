@@ -1,4 +1,4 @@
-# Immer Reducer
+# immer-reducer
 
 Create Redux reducers using [Immer](https://github.com/mweststrate/immer)!
 
@@ -19,6 +19,7 @@ import {ImmerReducer} from "immer-reducer";
 
 // The class represents the classic switch-case reducer
 class MyImmerReducer extends ImmerReducer {
+
     // each method becomes an Action Creator
     setFirstName(firstName) {
         // State updates are simple as assigning a value to
@@ -122,10 +123,9 @@ const setFirstNameEpic: Epic<SetFirstNameAction> = action$ =>
 
 This library by no means requires you to use Typescript but it was written
 specifically Typescript usage in mind because I was unable to find any other
-libraries that make Redux usage both boilerplate free and 100% type safe. To
-be honest it was no easy feat. Pretty advanced Typescript sorcery was
-required and so this library requires Typescript 3.1 or later. But the end
-results is really simple for the end user.
+libraries that make Redux usage both boilerplate free and 100% type safe.
+Pretty advanced Typescript sorcery was required and so this library requires
+Typescript 3.1 or later. But the end results is really simple for the end user.
 
 The Typescript usage does not differ that much from the Javascript usage.
 Just pass your state type as the type argument for the class
