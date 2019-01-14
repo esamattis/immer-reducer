@@ -196,7 +196,14 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             reducers[methodName](...action.payload);
 
             return draftState;
-        });
+        }) as any;
+        // XXX Since Immer 1.10.3 the produce function returns immutable version
+        // of the object passed to it which is not ok for reducers since
+        // reducers should always return the same type. So we must cast the
+        // return value to any to avoid type errors. There is no changes from
+        // this to the end users because this function return value is
+        // explicitly typed in the parent function signature. Also there's no
+        // changes in the runtime behaviour.
     };
 }
 
