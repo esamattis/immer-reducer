@@ -86,48 +86,26 @@ function removePrefix(actionType: string) {
         .join(":");
 }
 
-export function createActionCreators<T extends ImmerReducerClass>(
-    immerReducerClass: T,
-): ActionCreators<T> {
-    const actionCreators: {[key: string]: Function} = {};
-
-    Object.getOwnPropertyNames(immerReducerClass.prototype).forEach(key => {
-        if (key === "constructor") {
-            return;
-        }
-
-        const method = immerReducerClass.prototype[key];
-
-        if (typeof method !== "function") {
-            return;
-        }
-
-        const type = `${PREFIX}:${getReducerName(immerReducerClass)}#${key}`;
-        const actionCreator = (...args: any[]) => {
-            return {
-                type,
-                payload: args,
-            };
-        };
-        actionCreator.type = type;
-        actionCreators[key] = actionCreator;
-    });
-
-    return actionCreators as any; // typed in the function signature
-}
-
-function getReducerName(klass: {name: string; customName?: string}) {
-    return klass.customName || klass.name;
-}
-
 let KNOWN_REDUCER_CLASSES: typeof ImmerReducer[] = [];
 
 const DUPLICATE_INCREMENTS: {[name: string]: number | undefined} = {};
 
-export function createReducerFunction<T extends ImmerReducerClass>(
-    immerReducerClass: T,
-    initialState?: ImmerReducerState<T>,
-): ImmerReducerFunction<T> {
+/**
+ * Set customName for classes automatically if there is multiple reducers
+ * classes defined with the same name. This can occur accidentaly when using
+ * name mangling with minifiers.
+ *
+ * @param immerReducerClass
+ */
+function setCustomNameForDuplicates(immerReducerClass: typeof ImmerReducer) {
+    const hasSetCustomName = KNOWN_REDUCER_CLASSES.find(klass =>
+        Boolean(klass === immerReducerClass),
+    );
+
+    if (hasSetCustomName) {
+        return;
+    }
+
     const duplicateCustomName =
         immerReducerClass.customName &&
         KNOWN_REDUCER_CLASSES.find(klass =>
@@ -164,6 +142,49 @@ export function createReducerFunction<T extends ImmerReducerClass>(
     }
 
     KNOWN_REDUCER_CLASSES.push(immerReducerClass);
+}
+
+export function createActionCreators<T extends ImmerReducerClass>(
+    immerReducerClass: T,
+): ActionCreators<T> {
+    setCustomNameForDuplicates(immerReducerClass);
+
+    const actionCreators: {[key: string]: Function} = {};
+
+    Object.getOwnPropertyNames(immerReducerClass.prototype).forEach(key => {
+        if (key === "constructor") {
+            return;
+        }
+
+        const method = immerReducerClass.prototype[key];
+
+        if (typeof method !== "function") {
+            return;
+        }
+
+        const type = `${PREFIX}:${getReducerName(immerReducerClass)}#${key}`;
+        const actionCreator = (...args: any[]) => {
+            return {
+                type,
+                payload: args,
+            };
+        };
+        actionCreator.type = type;
+        actionCreators[key] = actionCreator;
+    });
+
+    return actionCreators as any; // typed in the function signature
+}
+
+function getReducerName(klass: {name: string; customName?: string}) {
+    return klass.customName || klass.name;
+}
+
+export function createReducerFunction<T extends ImmerReducerClass>(
+    immerReducerClass: T,
+    initialState?: ImmerReducerState<T>,
+): ImmerReducerFunction<T> {
+    setCustomNameForDuplicates(immerReducerClass);
 
     return function immerReducerFunction(state, action) {
         if (state === undefined) {

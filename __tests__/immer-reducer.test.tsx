@@ -292,6 +292,40 @@ test("dynamically generated reducers do not collide", () => {
     expect(store.getState().foo).toEqual("2");
 });
 
+test("can create dynamic reducers after creating actions", () => {
+    const initialState = {
+        foo: "",
+    };
+
+    function createGenericReducer<T extends {[key: string]: unknown}>(
+        value: string,
+    ) {
+        return class GenericReducer extends ImmerReducer<T> {
+            set() {
+                Object.assign(this.draftState, {foo: value});
+            }
+        };
+    }
+    const ReducerClass1 = createGenericReducer<typeof initialState>("1");
+    const ReducerClass2 = createGenericReducer<typeof initialState>("2");
+
+    const ActionCreators1 = createActionCreators(ReducerClass1);
+    const ActionCreators2 = createActionCreators(ReducerClass2);
+
+    const reducer1 = createReducerFunction(ReducerClass1, initialState);
+    const reducer2 = createReducerFunction(ReducerClass2, initialState);
+
+    const reducer = composeReducers(reducer1, reducer2);
+
+    const store = createStore(reducer);
+
+    store.dispatch(ActionCreators1.set());
+    expect(store.getState().foo).toEqual("1");
+
+    store.dispatch(ActionCreators2.set());
+    expect(store.getState().foo).toEqual("2");
+});
+
 test("throw error when using duplicate customNames", () => {
     class Reducer1 extends ImmerReducer<{foo: string}> {
         static customName = "dup";
