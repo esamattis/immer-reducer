@@ -37,6 +37,6 @@
     "redux": "^4.0.0"
   },
   "dependencies": {
-    "immer": "^1.10.2"
+    "immer": "^1.10.4"
   }
 }
