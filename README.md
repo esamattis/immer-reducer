@@ -28,9 +28,15 @@ type Action = SetFirstNameAction | SetLastNameAction;
 function reducer(action: Action, state: State): State {
     switch (action.type) {
         case "SET_FIRST_NAME":
-            return {...state, firstName: action.firstName};
+            return {
+                ...state,
+                user: {...state.user, firstName: action.firstName},
+            };
         case "SET_LAST_NAME":
-            return {...state, lastName: action.lastName};
+            return {
+                ...state,
+                user: {...state.user, lastName: action.lastName},
+            };
         default:
             return state;
     }
@@ -44,11 +50,11 @@ import {ImmerReducer} from "immer-reducer";
 
 class MyImmerReducer extends ImmerReducer<State> {
     setFirstName(firstName: string) {
-        this.draftState.firstName = firstName;
+        this.draftState.user.firstName = firstName;
     }
 
     setLastName(lastName: string) {
-        this.draftState.lastName = lastName;
+        this.draftState.user.lastName = lastName;
     }
 }
 ```
@@ -74,8 +80,10 @@ and create the Redux store
 import {createStore} from "redux";
 
 const initialState = {
-    firstName: "",
-    lastName: "",
+    user: {
+        firstName: "",
+        lastName: "",
+    },
 };
 
 const store = createStore(reducerFunction, initialState);
@@ -87,8 +95,8 @@ Dispatch some actions
 store.dispatch(ActionCreators.setFirstName("Charlie"));
 store.dispatch(ActionCreators.setLastName("Brown"));
 
-expect(store.getState().firstName).toEqual("Charlie");
-expect(store.getState().lastName).toEqual("Brown");
+expect(store.getState().user.firstName).toEqual("Charlie");
+expect(store.getState().user.lastName).toEqual("Brown");
 ```
 
 ## Typed Action Creators!
@@ -114,8 +122,10 @@ The reducer function is also typed properly
 const reducer = createReducerFunction(MyImmerReducer);
 
 const initialState: State = {
-    firstName: "",
-    lastName: "",
+    user: {
+        firstName: "",
+        lastName: "",
+    },
 };
 
 reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
