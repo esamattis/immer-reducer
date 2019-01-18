@@ -194,3 +194,10 @@ const setFirstNameEpic: Epic<SetFirstNameAction> = action$ =>
 Here's a more complete example with [redux-render-prop](https://github.com/epeli/redux-render-prop):
 
 <https://github.com/epeli/typescript-redux-todoapp>
+
+## API
+
+-   `createReducerFunction(klass: ImmerReducer: initialState?: Object)`
+-   `createActionCreators(klass: ImmerReducer)`
+-   `setPrefix(prefix: string)`
+    -   The default prefix in actions is is `IMMER_REDUCER`. Call this customize it for you app.
