@@ -67,6 +67,10 @@ export type ActionCreators<ClassActions extends ImmerReducerClass> = {
     >
 };
 
+interface CreateActionCreatorsOptions {
+    prefix?: string;
+}
+
 /** The actual ImmerReducer class */
 export class ImmerReducer<T> {
     static customName?: string;
@@ -146,6 +150,7 @@ function setCustomNameForDuplicates(immerReducerClass: typeof ImmerReducer) {
 
 export function createActionCreators<T extends ImmerReducerClass>(
     immerReducerClass: T,
+    options?: CreateActionCreatorsOptions,
 ): ActionCreators<T> {
     setCustomNameForDuplicates(immerReducerClass);
 
@@ -162,7 +167,9 @@ export function createActionCreators<T extends ImmerReducerClass>(
             return;
         }
 
-        const type = `${PREFIX}:${getReducerName(immerReducerClass)}#${key}`;
+        const actionTypePrefix = getActionTypePrefix(options);
+
+        const type = `${actionTypePrefix}:${getReducerName(immerReducerClass)}#${key}`;
         const actionCreator = (...args: any[]) => {
             return {
                 type,
@@ -174,6 +181,10 @@ export function createActionCreators<T extends ImmerReducerClass>(
     });
 
     return actionCreators as any; // typed in the function signature
+}
+
+function getActionTypePrefix(options?: CreateActionCreatorsOptions): string {
+    return (options && options.prefix || PREFIX);
 }
 
 function getReducerName(klass: {name: string; customName?: string}) {

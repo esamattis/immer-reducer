@@ -363,3 +363,21 @@ test("action creators expose the actual action type name", () => {
         "IMMER_REDUCER:TestReducer#setBar",
     );
 });
+
+test("can customize prefix of action type name what is returned by action creator.", () => {
+    const initialState = {foo: "bar"};
+
+    class TestReducer extends ImmerReducer<typeof initialState> {
+        setBar(foo: string) {
+            this.draftState.foo = foo;
+        }
+    }
+
+    const ActionCreators = createActionCreators(TestReducer, {
+        prefix: "AWESOME_LIBRARY",
+    });
+
+    expect(ActionCreators.setBar.type).toEqual(
+        "AWESOME_LIBRARY:TestReducer#setBar",
+    );
+});
