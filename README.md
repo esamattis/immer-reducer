@@ -98,14 +98,12 @@ libraries that make Redux usage both terse and 100% type safe.
 The generated `ActionsTypes` object respect the types used in the class
 
 ```ts
-const ActionCreators = createActionCreators(MyImmerReducer);
-
 const action = ActionCreators.setFirstName("Charlie"); // OK
 action.payload[0]; // string type
 
 action.payload[1]; // Type error. Only one argument.
-ActionCreators.setFirstName(1); // Type error
-ActionCreators.setWAT("Charlie"); // Type error
+ActionCreators.setFirstName(1); // Type error. Needs string.
+ActionCreators.setWAT("Charlie"); // Type error. Unknown method
 ```
 
 The reducer function is also typed properly
