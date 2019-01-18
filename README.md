@@ -8,30 +8,25 @@ Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boi
 
     npm install immer-reducer
 
-## Usage
+## Motivation
 
 Turn this
 
 ```ts
-enum ActionTypes {
-    SET_FIRST_NAME = "SET_FIRST_NAME",
-    SET_LAST_NAME = "SET_LAST_NAME",
-}
-
 interface SetFirstNameAction {
-    type: ActionTypes.SET_FIRST_NAME;
+    type: "SET_FIRST_NAME";
     firstName: string;
 }
 
 interface SetLastNameAction {
-    type: ActionTypes.SET_LAST_NAME;
+    type: "SET_LAST_NAME";
     lastName: string;
 }
 
 type Action = SetFirstNameAction | SetLastNameAction;
 
 function reducer(action: Action, state: State): State {
-    switch (action.name) {
+    switch (action.type) {
         case "SET_FIRST_NAME":
             return {...state, firstName: action.firstName};
         case "SET_LAST_NAME":
@@ -58,9 +53,11 @@ class MyImmerReducer extends ImmerReducer<State> {
 }
 ```
 
-Without losing the type-safety!
+**Without losing the type-safety!**
 
-Generate Action Creators and the actual reducer function for Redux
+## Usage
+
+Generate Action Creators and the actual reducer function for Redux from the class with
 
 ```ts
 import {createActionCreators, createReducerFunction} from "immer-reducer";
@@ -92,6 +89,41 @@ expect(store.getState().firstName).toEqual("Charlie");
 expect(store.getState().lastName).toEqual("Brown");
 ```
 
+This library by no means requires you to use Typescript but it was written
+specifically Typescript usage in mind because I was unable to find any other
+libraries that make Redux usage both boilerplate free and 100% type safe.
+
+The generated `ActionsTypes` object respect the types used in the class
+
+```ts
+const ActionCreators = createActionCreators(MyImmerReducer);
+
+const action = ActionCreators.setFirstName("Charlie"); // OK
+
+action.payload[0]; // string type
+
+action.payload[1]; // Type error. Only one argument.
+ActionCreators.setFirstName(1); // Type error
+ActionCreators.setWAT("Charlie"); // Type error
+```
+
+The reducer function is also typed properly
+
+```ts
+const reducer = createReducerFunction(MyImmerReducer);
+
+const initialState: State = {
+    firstName: "",
+    lastName: "",
+};
+
+reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
+reducer(initialState, {type: "WAT"}); // Type error
+reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
+```
+
+## How
+
 Under the hood the class is deconstructed to following actions:
 
 ```js
@@ -115,42 +147,7 @@ handled by the generated reducer function.
 The generated reducer function executes the methods inside the `produce()`
 function of Immer enabling the terse mutatable style updates.
 
-# 100% Type Safety with Typescript
-
-This library by no means requires you to use Typescript but it was written
-specifically Typescript usage in mind because I was unable to find any other
-libraries that make Redux usage both boilerplate free and 100% type safe. But
-the end results is really simple for the end user.
-
-The generated `ActionsTypes` object respect the types used in the class
-
-```ts
-const ActionCreators = createActionCreators(MyImmerReducer);
-
-const action = ActionCreators.setFirstName("Charlie"); // OK
-
-action.payload[0]; // string
-
-ActionCreators.setFirstName(1); // Type error
-ActionCreators.setWAT("Charlie"); // Type error
-```
-
-The reducer function is also typed properly
-
-```ts
-const reducer = createReducerFunction(MyImmerReducer);
-
-const initialState: State = {
-    firstName: "",
-    lastName: "",
-};
-
-reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
-reducer(initialState, {type: "WAT"}); // Type error
-reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
-```
-
-# Integrating with the Redux ecosystem
+## Integrating with the Redux ecosystem
 
 To integrate for example with the side effects libraries such as
 [redux-observable](https://github.com/redux-observable/redux-observable/) and
