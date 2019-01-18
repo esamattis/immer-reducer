@@ -10,7 +10,7 @@ Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boi
 
 ## Motivation
 
-Turn this
+Turn this 💩
 
 ```ts
 interface SetFirstNameAction {
@@ -37,7 +37,7 @@ function reducer(action: Action, state: State): State {
 }
 ```
 
-into this!
+into this! 🚀
 
 ```ts
 import {ImmerReducer} from "immer-reducer";
@@ -54,6 +54,8 @@ class MyImmerReducer extends ImmerReducer<State> {
 ```
 
 **Without losing the type-safety!**
+
+Oh, and you get the action creators for free! 🤗 🎂
 
 ## Usage
 
