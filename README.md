@@ -1,6 +1,6 @@
 # immer-reducer
 
-Create Type-Safe Redux reducers using [Immer](https://github.com/mweststrate/immer) and Typescript!
+Create terse Type-Safe Redux reducers using [Immer](https://github.com/mweststrate/immer) and Typescript!
 
 Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boilerplate-free-redux-906844ec6325).
 
