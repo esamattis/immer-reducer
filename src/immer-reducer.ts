@@ -1,6 +1,6 @@
 import produce, {Draft} from "immer";
 
-const PREFIX = "IMMER_REDUCER";
+let actionTypePrefix = "IMMER_REDUCER";
 
 /** get function arguments as tuple type */
 type ArgumentsType<T> = T extends (...args: infer V) => any ? V : never;
@@ -162,7 +162,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
             return;
         }
 
-        const type = `${PREFIX}:${getReducerName(immerReducerClass)}#${key}`;
+        const type = `${actionTypePrefix}:${getReducerName(immerReducerClass)}#${key}`;
         const actionCreator = (...args: any[]) => {
             return {
                 type,
@@ -191,7 +191,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             state = initialState;
         }
 
-        if (!action.type.startsWith(PREFIX + ":")) {
+        if (!action.type.startsWith(actionTypePrefix + ":")) {
             return state;
         }
 
@@ -219,6 +219,10 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             return draftState;
         });
     };
+}
+
+export function setPrefix(prefix: string): void {
+    actionTypePrefix = prefix;
 }
 
 /**

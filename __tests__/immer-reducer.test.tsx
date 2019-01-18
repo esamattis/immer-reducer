@@ -2,6 +2,7 @@ import {
     ImmerReducer,
     createReducerFunction,
     createActionCreators,
+    setPrefix,
     _clearKnownClasses,
 } from "../src/immer-reducer";
 
@@ -362,4 +363,28 @@ test("action creators expose the actual action type name", () => {
     expect(ActionCreators.setBar.type).toEqual(
         "IMMER_REDUCER:TestReducer#setBar",
     );
+});
+
+test("can customize prefix of action type name what is returned by action creator.", () => {
+    const initialState = {foo: "bar"};
+
+    class TestReducer extends ImmerReducer<typeof initialState> {
+        setBar(foo: string) {
+            this.draftState.foo = foo;
+        }
+    }
+
+    setPrefix("AWESOME_LIBRARY");
+    const ActionCreators = createActionCreators(TestReducer);
+
+    expect(ActionCreators.setBar.type).toEqual(
+        "AWESOME_LIBRARY:TestReducer#setBar",
+    );
+
+    const reducer = createReducerFunction(TestReducer);
+    const store = createStore(reducer, initialState);
+
+    store.dispatch(ActionCreators.setBar("ding"));
+
+    expect(store.getState()).toEqual({foo: "ding"});
 });
