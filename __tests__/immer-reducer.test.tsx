@@ -380,4 +380,11 @@ test("can customize prefix of action type name what is returned by action creato
     expect(ActionCreators.setBar.type).toEqual(
         "AWESOME_LIBRARY:TestReducer#setBar",
     );
+
+    const reducer = createReducerFunction(TestReducer);
+    const store = createStore(reducer, initialState);
+
+    store.dispatch(ActionCreators.setBar("ding"));
+
+    expect(store.getState()).toEqual({foo: "ding"});
 });
