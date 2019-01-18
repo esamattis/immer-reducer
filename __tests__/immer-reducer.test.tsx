@@ -2,6 +2,7 @@ import {
     ImmerReducer,
     createReducerFunction,
     createActionCreators,
+    setPrefix,
     _clearKnownClasses,
 } from "../src/immer-reducer";
 
@@ -373,9 +374,8 @@ test("can customize prefix of action type name what is returned by action creato
         }
     }
 
-    const ActionCreators = createActionCreators(TestReducer, {
-        prefix: "AWESOME_LIBRARY",
-    });
+    setPrefix("AWESOME_LIBRARY");
+    const ActionCreators = createActionCreators(TestReducer);
 
     expect(ActionCreators.setBar.type).toEqual(
         "AWESOME_LIBRARY:TestReducer#setBar",
