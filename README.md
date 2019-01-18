@@ -30,12 +30,18 @@ function reducer(action: Action, state: State): State {
         case "SET_FIRST_NAME":
             return {
                 ...state,
-                user: {...state.user, firstName: action.firstName},
+                user: {
+                    ...state.user,
+                    firstName: action.firstName,
+                },
             };
         case "SET_LAST_NAME":
             return {
                 ...state,
-                user: {...state.user, lastName: action.lastName},
+                user: {
+                    ...state.user,
+                    lastName: action.lastName,
+                },
             };
         default:
             return state;
