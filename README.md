@@ -93,7 +93,7 @@ expect(store.getState().lastName).toEqual("Brown");
 
 This library by no means requires you to use Typescript but it was written
 specifically Typescript usage in mind because I was unable to find any other
-libraries that make Redux usage both boilerplate free and 100% type safe.
+libraries that make Redux usage both terse and 100% type safe.
 
 The generated `ActionsTypes` object respect the types used in the class
 
@@ -101,7 +101,6 @@ The generated `ActionsTypes` object respect the types used in the class
 const ActionCreators = createActionCreators(MyImmerReducer);
 
 const action = ActionCreators.setFirstName("Charlie"); // OK
-
 action.payload[0]; // string type
 
 action.payload[1]; // Type error. Only one argument.
