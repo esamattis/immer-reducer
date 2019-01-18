@@ -14,6 +14,9 @@ interface Reducer<State> {
 
 beforeEach(_clearKnownClasses);
 
+afterEach(() => {
+    setPrefix("IMMER_REDUCER");
+});
 /**
  * Combine multiple reducers into a single one
  *
