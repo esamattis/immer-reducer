@@ -200,4 +200,4 @@ Here's a more complete example with [redux-render-prop](https://github.com/epeli
 -   `createReducerFunction(klass: ImmerReducer: initialState?: Object)`
 -   `createActionCreators(klass: ImmerReducer)`
 -   `setPrefix(prefix: string)`
-    -   The default prefix in actions is is `IMMER_REDUCER`. Call this customize it for you app.
+    -   The default prefix in actions is is `IMMER_REDUCER`. Call this customize it for your app.
