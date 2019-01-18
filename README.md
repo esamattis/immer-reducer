@@ -99,7 +99,7 @@ The generated `ActionsTypes` object respect the types used in the class
 
 ```ts
 const action = ActionCreators.setFirstName("Charlie"); // OK
-action.payload[0]; // string type
+action.payload[0]; // OK string type
 
 action.payload[1]; // Type error. Only one argument.
 ActionCreators.setFirstName(1); // Type error. Needs string.
