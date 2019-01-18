@@ -89,6 +89,8 @@ expect(store.getState().firstName).toEqual("Charlie");
 expect(store.getState().lastName).toEqual("Brown");
 ```
 
+## Typed Action Creators!
+
 This library by no means requires you to use Typescript but it was written
 specifically Typescript usage in mind because I was unable to find any other
 libraries that make Redux usage both boilerplate free and 100% type safe.
