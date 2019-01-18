@@ -1,8 +1,6 @@
 # immer-reducer
 
-Create Redux reducers using [Immer](https://github.com/mweststrate/immer)!
-
-Typescript [friendly](#100-type-safety-with-typescript) too.
+Create Type-Safe Redux reducers using [Immer](https://github.com/mweststrate/immer) and Typescript!
 
 Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boilerplate-free-redux-906844ec6325).
 
@@ -12,36 +10,59 @@ Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boi
 
 ## Usage
 
-Reducers are defined by extending from the `ImmerReducer` class
+Turn this
 
-```js
-import {ImmerReducer} from "immer-reducer";
+```ts
+enum ActionTypes {
+    SET_FIRST_NAME = "SET_FIRST_NAME",
+    SET_LAST_NAME = "SET_LAST_NAME",
+}
 
-// The class represents the classic switch-case reducer
-class MyImmerReducer extends ImmerReducer {
+interface SetFirstNameAction {
+    type: ActionTypes.SET_FIRST_NAME;
+    firstName: string;
+}
 
-    // each method becomes an Action Creator
-    setFirstName(firstName) {
-        // State updates are simple as assigning a value to
-        // the draftState property thanks to Immer
-        this.draftState.firstName = firstName;
-    }
+interface SetLastNameAction {
+    type: ActionTypes.SET_LAST_NAME;
+    lastName: string;
+}
 
-    setLastName(lastName) {
-        this.draftState.lastName = lastName;
-    }
+type Action = SetFirstNameAction | SetLastNameAction;
 
-    // You can combine methods to a single Action Creator
-    setName(firstName, lastName) {
-        this.setFirstName(firstName);
-        this.setLastName(lastName);
+function reducer(action: Action, state: State): State {
+    switch (action.name) {
+        case "SET_FIRST_NAME":
+            return {...state, firstName: action.firstName};
+        case "SET_LAST_NAME":
+            return {...state, lastName: action.lastName};
+        default:
+            return state;
     }
 }
 ```
 
+into this!
+
+```ts
+import {ImmerReducer} from "immer-reducer";
+
+class MyImmerReducer extends ImmerReducer<State> {
+    setFirstName(firstName: string) {
+        this.draftState.firstName = firstName;
+    }
+
+    setLastName(lastName: string) {
+        this.draftState.lastName = lastName;
+    }
+}
+```
+
+Without losing the type-safety!
+
 Generate Action Creators and the actual reducer function for Redux
 
-```js
+```ts
 import {createActionCreators, createReducerFunction} from "immer-reducer";
 
 const ActionCreators = createActionCreators(MyImmerReducer);
@@ -50,7 +71,7 @@ const reducerFunction = createReducerFunction(MyImmerReducer);
 
 and create the Redux store
 
-```js
+```ts
 import {createStore} from "redux";
 
 const initialState = {
@@ -63,7 +84,7 @@ const store = createStore(reducerFunction, initialState);
 
 Dispatch some actions
 
-```js
+```ts
 store.dispatch(ActionCreators.setFirstName("Charlie"));
 store.dispatch(ActionCreators.setLastName("Brown"));
 
@@ -94,6 +115,41 @@ handled by the generated reducer function.
 The generated reducer function executes the methods inside the `produce()`
 function of Immer enabling the terse mutatable style updates.
 
+# 100% Type Safety with Typescript
+
+This library by no means requires you to use Typescript but it was written
+specifically Typescript usage in mind because I was unable to find any other
+libraries that make Redux usage both boilerplate free and 100% type safe. But
+the end results is really simple for the end user.
+
+The generated `ActionsTypes` object respect the types used in the class
+
+```ts
+const ActionCreators = createActionCreators(MyImmerReducer);
+
+const action = ActionCreators.setFirstName("Charlie"); // OK
+
+action.payload[0]; // string
+
+ActionCreators.setFirstName(1); // Type error
+ActionCreators.setWAT("Charlie"); // Type error
+```
+
+The reducer function is also typed properly
+
+```ts
+const reducer = createReducerFunction(MyImmerReducer);
+
+const initialState: State = {
+    firstName: "",
+    lastName: "",
+};
+
+reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
+reducer(initialState, {type: "WAT"}); // Type error
+reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
+```
+
 # Integrating with the Redux ecosystem
 
 To integrate for example with the side effects libraries such as
@@ -114,65 +170,9 @@ const setFirstNameEpic: Epic<SetFirstNameAction> = action$ =>
     .ofType(setFirstNameActionTypeName)
     .pipe(
       // action.payload - recognized as string
-      map(action => action.payload.toUpperCase()),
+      map(action => action.payload[0].toUpperCase()),
       ...
     );
-```
-
-# 100% Type Safety with Typescript
-
-This library by no means requires you to use Typescript but it was written
-specifically Typescript usage in mind because I was unable to find any other
-libraries that make Redux usage both boilerplate free and 100% type safe.
-Pretty advanced Typescript sorcery was required and so this library requires
-Typescript 3.1 or later. But the end results is really simple for the end user.
-
-The Typescript usage does not differ that much from the Javascript usage.
-Just pass your state type as the type argument for the class
-
-```ts
-interface State {
-    // The state can be defined as read only
-    readonly firstName: string;
-    readonly lastName: string;
-}
-
-class MyImmerReducer extends ImmerReducer<State> {
-    setFirstName(firstName: string) {
-        // draftState has the State type but the readonly
-        // flags are removed here to allow type safe mutation
-        this.draftState.firstName = firstName;
-    }
-
-    setLastName(lastName: string) {
-        this.draftState.lastName = lastName;
-    }
-}
-```
-
-The generated `ActionsTypes` object now respects the types used in the class
-
-```ts
-const ActionCreators = createActionCreators(MyImmerReducer);
-
-ActionCreators.setFirstName("Charlie"); // OK
-ActionCreators.setFirstName(1); // Type error
-ActionCreators.setWAT("Charlie"); // Type error
-```
-
-The reducer function is also typed properly
-
-```ts
-const reducer = createReducerFunction(MyImmerReducer);
-
-const initialState: State = {
-    firstName: "",
-    lastName: "",
-};
-
-reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
-reducer(initialState, {type: "WAT"}); // Type error
-reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
 ```
 
 ## Examples
