@@ -53,7 +53,7 @@ class MyImmerReducer extends ImmerReducer<State> {
 }
 ```
 
-**Without losing the type-safety!**
+**Without losing the type-safety!** 🔥
 
 Oh, and you get the action creators for free! 🤗 🎂
 
