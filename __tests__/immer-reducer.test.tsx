@@ -3,9 +3,10 @@ import {
     createReducerFunction,
     createActionCreators,
     _clearKnownClasses,
+    isAction,
 } from "../src/immer-reducer";
 
-import {createStore, combineReducers} from "redux";
+import {createStore, combineReducers, Action} from "redux";
 
 interface Reducer<State> {
     (state: State | undefined, action: any): State;
@@ -362,4 +363,22 @@ test("action creators expose the actual action type name", () => {
     expect(ActionCreators.setBar.type).toEqual(
         "IMMER_REDUCER:TestReducer#setBar",
     );
+});
+
+test("isAction can detect actions", () => {
+    class TestReducer extends ImmerReducer<{foo: string}> {
+        setFoo(foo: string) {
+            this.draftState.foo = foo;
+        }
+    }
+    const ActionCreators = createActionCreators(TestReducer);
+
+    const action1: Action = ActionCreators.setFoo("foo");
+
+    const action2: Action = {
+        type: "other",
+    };
+
+    expect(isAction(action1, ActionCreators.setFoo)).toBe(true);
+    expect(isAction(action2, ActionCreators.setFoo)).toBe(false);
 });
