@@ -28,6 +28,9 @@ type ReturnTypeUnion<T extends MethodObject> = ObjectValueTypes<
     FlattenToReturnTypes<T>
 >;
 
+/**
+ * Get union of actions types from a ImmerReducer class
+ */
 export type Actions<T extends ImmerReducerClass> = ReturnTypeUnion<
     ActionCreators<T>
 >;
@@ -56,7 +59,7 @@ interface ImmerReducerFunction<T extends ImmerReducerClass> {
 }
 
 /** ActionCreator function interface with actual action type name */
-interface ActionCreator<ActionTypeType, Payload extends any[]> {
+interface ImmerActionCreator<ActionTypeType, Payload extends any[]> {
     readonly type: ActionTypeType;
 
     (...args: Payload): {
@@ -67,13 +70,19 @@ interface ActionCreator<ActionTypeType, Payload extends any[]> {
 
 /** generate ActionCreators types from the ImmerReducer class */
 export type ActionCreators<ClassActions extends ImmerReducerClass> = {
-    [K in keyof Methods<InstanceType<ClassActions>>]: ActionCreator<
+    [K in keyof Methods<InstanceType<ClassActions>>]: ImmerActionCreator<
         K,
         ArgumentsType<InstanceType<ClassActions>[K]>
     >
 };
 
-export function isAction<A extends ActionCreator<any, any>>(
+/**
+ * Type guard for detecting actions created by immer reducer
+ *
+ * @param action any redux action
+ * @param immerActionCreator method from a ImmerReducer class
+ */
+export function isAction<A extends ImmerActionCreator<any, any>>(
     action: {type: any},
     immerActionCreator: A,
 ): action is ReturnType<A> {

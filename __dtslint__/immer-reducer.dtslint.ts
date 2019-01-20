@@ -196,3 +196,15 @@ const someActionsTest:
           type: "setBar";
           payload: [number];
       } = someActions;
+
+class MyImmerReducer extends ImmerReducer<State> {
+    setFirstName(firstName: string) {
+        // this.draftState.user.firstName = firstName;
+    }
+
+    setLastName(lastName: string) {
+        // this.draftState.user.lastName = lastName;
+    }
+}
+
+type Foo = Actions<typeof MyImmerReducer>;
