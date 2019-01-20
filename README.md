@@ -219,7 +219,7 @@ Example
 
 ```ts
 if (isAction(someAction, ActionCreators.setFirstName)) {
-    someAction.type; // Type checks `"setFirstName`
+    someAction.type; // Type checks to `"setFirstName"`
     someAction.payload; // Type checks `[string]`
 }
 ```
