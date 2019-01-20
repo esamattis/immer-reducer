@@ -197,14 +197,26 @@ const someActionsTest:
           payload: [number];
       } = someActions;
 
-class MyImmerReducer extends ImmerReducer<State> {
-    setFirstName(firstName: string) {
-        // this.draftState.user.firstName = firstName;
-    }
+type MyReducerActions = Actions<typeof MyReducer>;
+declare const myReducerActions: MyReducerActions;
 
-    setLastName(lastName: string) {
-        // this.draftState.user.lastName = lastName;
-    }
-}
+// $ExpectError
+const actions_not_any: AssertNotAny = myReducerActions;
 
-type Foo = Actions<typeof MyImmerReducer>;
+const actions_manual:
+    | {
+          type: "setBoth";
+          payload: [string, number];
+      }
+    | {
+          type: "setFoo";
+          payload: [string];
+      }
+    | {
+          type: "setBar";
+          payload: [number];
+      }
+    | {
+          type: "setFooStatic";
+          payload: [];
+      } = myReducerActions;
