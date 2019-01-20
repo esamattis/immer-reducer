@@ -184,7 +184,9 @@ export function createActionCreators<T extends ImmerReducerClass>(
             return;
         }
 
-        const type = `${actionTypePrefix}:${getReducerName(immerReducerClass)}#${key}`;
+        const type = `${actionTypePrefix}:${getReducerName(
+            immerReducerClass,
+        )}#${key}`;
         const actionCreator = (...args: any[]) => {
             return {
                 type,
