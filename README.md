@@ -202,7 +202,7 @@ function* watchFirstNameChanges() {
 // action creators object
 function* watchImmerActions() {
     yield takeEvery(
-        action => isActionFrom(ActionCreators),
+        (action: Action) => isActionFrom(action, ActionCreators),
         handleImmerReducerAction,
     );
 }
