@@ -3,6 +3,7 @@ import {
     createActionCreators,
     createReducerFunction,
     isAction,
+    Actions,
 } from "../src/immer-reducer";
 
 interface AssertNotAny {
@@ -168,3 +169,30 @@ if (isAction(unknownAction, ActionCreators.setBar)) {
     // $ExpectError
     const nope: number = unknownAction.payload[2];
 }
+
+class Reducer1 extends ImmerReducer<State> {
+    setFoo(newFoo: string) {
+        this.draftState.foo = newFoo;
+    }
+
+    setBar(newBar: number) {
+        this.draftState.bar = newBar;
+    }
+}
+
+type MyActions = Actions<typeof Reducer1>;
+
+declare const someActions: MyActions;
+
+// $ExpectError
+const someActionsNotAny: AssertNotAny = someActions;
+
+const someActionsTest:
+    | {
+          type: "setFoo";
+          payload: [string];
+      }
+    | {
+          type: "setBar";
+          payload: [number];
+      } = someActions;
