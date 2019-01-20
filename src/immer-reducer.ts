@@ -221,6 +221,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
         const type = `${actionTypePrefix}:${getReducerName(
             immerReducerClass,
         )}#${key}`;
+
         const actionCreator = (...args: any[]) => {
             return {
                 type,
