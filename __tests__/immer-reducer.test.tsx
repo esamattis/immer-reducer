@@ -4,9 +4,10 @@ import {
     createActionCreators,
     setPrefix,
     _clearKnownClasses,
+    isAction,
 } from "../src/immer-reducer";
 
-import {createStore, combineReducers} from "redux";
+import {createStore, combineReducers, Action} from "redux";
 
 interface Reducer<State> {
     (state: State | undefined, action: any): State;
@@ -390,4 +391,22 @@ test("can customize prefix of action type name what is returned by action creato
     store.dispatch(ActionCreators.setBar("ding"));
 
     expect(store.getState()).toEqual({foo: "ding"});
+});
+
+test("isAction can detect actions", () => {
+    class TestReducer extends ImmerReducer<{foo: string}> {
+        setFoo(foo: string) {
+            this.draftState.foo = foo;
+        }
+    }
+    const ActionCreators = createActionCreators(TestReducer);
+
+    const action1: Action = ActionCreators.setFoo("foo");
+
+    const action2: Action = {
+        type: "other",
+    };
+
+    expect(isAction(action1, ActionCreators.setFoo)).toBe(true);
+    expect(isAction(action2, ActionCreators.setFoo)).toBe(false);
 });

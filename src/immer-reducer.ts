@@ -67,6 +67,13 @@ export type ActionCreators<ClassActions extends ImmerReducerClass> = {
     >
 };
 
+export function isAction<A extends ActionCreator<any, any>>(
+    action: {type: any},
+    immerActionCreator: A,
+): action is ReturnType<A> {
+    return action.type === immerActionCreator.type;
+}
+
 /** The actual ImmerReducer class */
 export class ImmerReducer<T> {
     static customName?: string;
