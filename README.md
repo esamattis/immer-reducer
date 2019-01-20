@@ -198,7 +198,8 @@ function* watchFirstNameChanges() {
     yield takeEvery(ActionCreators.setFirstName.type, doStuff);
 }
 
-// or use the isActionFrom() get all actions from a specific ImmerReducer action creators
+// or use the isActionFrom() to get all actions from a specific ImmerReducer
+// action creators object
 function* watchImmerActions() {
     yield takeEvery(
         action => isActionFrom(ActionCreators),
