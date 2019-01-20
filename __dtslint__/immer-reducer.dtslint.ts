@@ -34,6 +34,10 @@ class MyReducer extends ImmerReducer<State> {
     }
 }
 
+////////////////////
+// Test action types
+////////////////////
+
 const ActionCreators = createActionCreators(MyReducer);
 
 // Action creator return Action Object
@@ -65,6 +69,10 @@ ActionCreators.setBar("sdf");
 // Do not allow bad method names
 // $ExpectError
 ActionCreators.setBad(3);
+
+//////////////////////
+// Test reducer types
+//////////////////////
 
 class BadReducer {
     dong() {}
@@ -155,6 +163,10 @@ const actionType: "setBar" = ActionCreators.setBar.type;
 // $ExpectError
 const actionType_not_any: AssertNotAny = ActionCreators.setBar.type;
 
+/////////////////////
+// test isAction type
+/////////////////////
+
 declare const unknownAction: {type: string};
 
 if (isAction(unknownAction, ActionCreators.setBar)) {
@@ -169,6 +181,10 @@ if (isAction(unknownAction, ActionCreators.setBar)) {
     // $ExpectError
     const nope: number = unknownAction.payload[2];
 }
+
+/////////////////////////////
+// Test Actions<> type helper
+/////////////////////////////
 
 class Reducer1 extends ImmerReducer<State> {
     setFoo(newFoo: string) {
