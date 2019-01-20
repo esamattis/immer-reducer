@@ -89,6 +89,31 @@ export function isAction<A extends ImmerActionCreator<any, any>>(
     return action.type === immerActionCreator.type;
 }
 
+export function isActionFrom<T extends ImmerReducerClass>(
+    action: {type: any},
+    immerReducerClass: T,
+): action is Actions<T> {
+    if (typeof action.type !== "string") {
+        return false;
+    }
+
+    if (!action.type.startsWith(actionTypePrefix + ":")) {
+        return false;
+    }
+
+    const [className, methodName] = removePrefix(action.type).split("#");
+
+    if (className !== getReducerName(immerReducerClass)) {
+        return false;
+    }
+
+    if (typeof immerReducerClass.prototype[methodName] !== "function") {
+        return false;
+    }
+
+    return true;
+}
+
 /** The actual ImmerReducer class */
 export class ImmerReducer<T> {
     static customName?: string;
@@ -215,17 +240,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             state = initialState;
         }
 
-        if (!action.type.startsWith(actionTypePrefix + ":")) {
-            return state;
-        }
-
-        const [className, methodName] = removePrefix(action.type).split("#");
-
-        if (className !== getReducerName(immerReducerClass)) {
-            return state;
-        }
-
-        if (typeof immerReducerClass.prototype[methodName] !== "function") {
+        if (!isActionFrom(action, immerReducerClass)) {
             return state;
         }
 
@@ -234,6 +249,8 @@ export function createReducerFunction<T extends ImmerReducerClass>(
                 "ImmerReducer does not support undefined state. Pass initial state to createReducerFunction() or createStore()",
             );
         }
+
+        const [_, methodName] = removePrefix(action.type).split("#");
 
         return produce(state as any, draftState => {
             const reducers: any = new immerReducerClass(draftState, state);
