@@ -170,7 +170,9 @@ To integrate for example with the side effects libraries such as
 [redux-observable](https://github.com/redux-observable/redux-observable/) and
 [redux-saga](https://github.com/redux-saga/redux-saga), you can access the
 generated action type using the `type` property of the action creator
-function:
+function.
+
+In redux-observable
 
 ```ts
 // Get the action name to subscribe to
@@ -187,6 +189,29 @@ const setFirstNameEpic: Epic<SetFirstNameAction> = action$ =>
       map(action => action.payload[0].toUpperCase()),
       ...
     );
+```
+
+In redux-saga
+
+```ts
+function* watchFirstNameChanges() {
+    yield takeEvery(ActionCreators.setFirstName.type, doStuff);
+}
+
+// or use the isActionFrom() get all actions from a specific ImmerReducer action creators
+function* watchImmerActions() {
+    yield takeEvery(
+        action => isActionFrom(ActionCreators),
+        handleImmerReducerAction,
+    );
+}
+
+function* handleImmerReducerAction(action: Actions<typeof MyImmerReducer>) {
+    // `action` is a union of action types
+    if (isAction(action, ActionCreators.setFirstName)) {
+        // with action of setFirstName
+    }
+}
 ```
 
 ## Examples
