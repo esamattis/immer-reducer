@@ -89,7 +89,7 @@ export function isAction<A extends ImmerActionCreator<any, any>>(
     return action.type === immerActionCreator.type;
 }
 
-export function isActionFrom<T extends ImmerReducerClass>(
+function isActionFromClass<T extends ImmerReducerClass>(
     action: {type: any},
     immerReducerClass: T,
 ): action is Actions<T> {
@@ -112,6 +112,13 @@ export function isActionFrom<T extends ImmerReducerClass>(
     }
 
     return true;
+}
+
+export function isActionFrom<T extends {__class: ImmerReducerClass}>(
+    action: {type: any},
+    actionCreators: T,
+): action is Actions<T["__class"]> {
+    return isActionFromClass(action, actionCreators.__class);
 }
 
 /** The actual ImmerReducer class */
@@ -193,10 +200,12 @@ function setCustomNameForDuplicates(immerReducerClass: typeof ImmerReducer) {
 
 export function createActionCreators<T extends ImmerReducerClass>(
     immerReducerClass: T,
-): ActionCreators<T> {
+): ActionCreators<T> & {__class: T} {
     setCustomNameForDuplicates(immerReducerClass);
 
     const actionCreators: {[key: string]: Function} = {};
+
+    actionCreators.__class = immerReducerClass;
 
     Object.getOwnPropertyNames(immerReducerClass.prototype).forEach(key => {
         if (key === "constructor") {
@@ -240,7 +249,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             state = initialState;
         }
 
-        if (!isActionFrom(action, immerReducerClass)) {
+        if (!isActionFromClass(action, immerReducerClass)) {
             return state;
         }
 

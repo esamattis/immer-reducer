@@ -5,6 +5,7 @@ import {
     setPrefix,
     _clearKnownClasses,
     isAction,
+    isActionFrom,
 } from "../src/immer-reducer";
 
 import {createStore, combineReducers, Action} from "redux";
@@ -391,6 +392,24 @@ test("can customize prefix of action type name what is returned by action creato
     store.dispatch(ActionCreators.setBar("ding"));
 
     expect(store.getState()).toEqual({foo: "ding"});
+});
+
+test("isActionFrom can detect actions", () => {
+    class TestReducer extends ImmerReducer<{foo: string}> {
+        setFoo(foo: string) {
+            this.draftState.foo = foo;
+        }
+    }
+    const ActionCreators = createActionCreators(TestReducer);
+
+    const action1: Action = ActionCreators.setFoo("foo");
+
+    const action2: Action = {
+        type: "other",
+    };
+
+    expect(isActionFrom(action1, ActionCreators)).toBe(true);
+    expect(isActionFrom(action2, ActionCreators)).toBe(false);
 });
 
 test("isAction can detect actions", () => {
