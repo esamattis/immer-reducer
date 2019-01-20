@@ -163,9 +163,9 @@ const actionType: "setBar" = ActionCreators.setBar.type;
 // $ExpectError
 const actionType_not_any: AssertNotAny = ActionCreators.setBar.type;
 
-/////////////////////
-// test isAction type
-/////////////////////
+//////////////////////
+// Test isAction types
+//////////////////////
 
 declare const unknownAction: {type: string};
 
@@ -213,7 +213,7 @@ const someActionsTest:
           payload: [number];
       } = someActions;
 
-type MyReducerActions = Actions<typeof MyReducer>;
+type MyReducerActions = Actions<typeof Reducer1>;
 declare const myReducerActions: MyReducerActions;
 
 // $ExpectError
@@ -221,18 +221,10 @@ const actions_not_any: AssertNotAny = myReducerActions;
 
 const actions_manual:
     | {
-          type: "setBoth";
-          payload: [string, number];
-      }
-    | {
           type: "setFoo";
           payload: [string];
       }
     | {
           type: "setBar";
           payload: [number];
-      }
-    | {
-          type: "setFooStatic";
-          payload: [];
       } = myReducerActions;
