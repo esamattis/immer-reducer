@@ -1,9 +1,12 @@
+import {Action} from "redux";
+
 import {
     ImmerReducer,
     createActionCreators,
     createReducerFunction,
     isAction,
     Actions,
+    isActionFrom,
 } from "../src/immer-reducer";
 
 interface AssertNotAny {
@@ -228,3 +231,24 @@ const actions_manual:
           type: "setBar";
           payload: [number];
       } = myReducerActions;
+
+//////////////////////////
+// Test isActionFrom types
+//////////////////////////
+
+declare const someAction: Action;
+
+if (isActionFrom(someAction, Reducer1)) {
+    // $ExpectError
+    const notany: AssertNotAny = someAction;
+
+    const actions_manual:
+        | {
+              type: "setFoo";
+              payload: [string];
+          }
+        | {
+              type: "setBar";
+              payload: [number];
+          } = someAction;
+}
