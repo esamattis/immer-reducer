@@ -10,11 +10,13 @@ type FunctionPropertyNames<T> = {
     [K in keyof T]: T[K] extends Function ? K : never
 }[keyof T];
 
+type MethodObject = {[key: string]: () => any};
+
 /** Pick only methods from object */
 type Methods<T> = Pick<T, FunctionPropertyNames<T>>;
 
 /** flatten functions in an object to their return values */
-type FlattenToReturnTypes<T extends {[key: string]: () => any}> = {
+type FlattenToReturnTypes<T extends MethodObject> = {
     [K in keyof T]: ReturnType<T[K]>
 };
 
@@ -22,8 +24,12 @@ type FlattenToReturnTypes<T extends {[key: string]: () => any}> = {
 type ObjectValueTypes<T> = T[keyof T];
 
 /** get union of object method return types */
-type ReturnTypeUnion<T extends {[key: string]: () => any}> = ObjectValueTypes<
+type ReturnTypeUnion<T extends MethodObject> = ObjectValueTypes<
     FlattenToReturnTypes<T>
+>;
+
+export type Actions<T extends ImmerReducerClass> = ReturnTypeUnion<
+    ActionCreators<T>
 >;
 
 /** type constraint for the ImmerReducer class  */
