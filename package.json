@@ -24,23 +24,23 @@
     "lib"
   ],
   "devDependencies": {
-    "@types/jest": "^23.3.12",
-    "@types/react": "^16.7.18",
+    "@types/jest": "^23.3.13",
+    "@types/react": "^16.7.20",
     "@types/react-dom": "^16.0.11",
     "@types/redux": "^3.6.0",
     "dtslint": "^0.4.2",
     "jest": "^23.6.0",
-    "prettier": "^1.15.3",
+    "prettier": "^1.16.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-testing-library": "^5.4.4",
     "ts-jest": "^23.10.5",
-    "typescript": "~3.2.2"
+    "typescript": "~3.2.4"
   },
   "peerDependencies": {
     "redux": "^4.0.0"
   },
   "dependencies": {
-    "immer": "^1.10.5"
+    "immer": "^1.11.0"
   }
 }
