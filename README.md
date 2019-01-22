@@ -1,6 +1,6 @@
 # immer-reducer
 
-Create terse Type-Safe Redux reducers using [Immer](https://github.com/mweststrate/immer) and Typescript!
+Create terse type-safe Redux reducers using [Immer](https://github.com/mweststrate/immer) and Typescript!
 
 Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boilerplate-free-redux-906844ec6325).
 
@@ -10,7 +10,7 @@ Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boi
 
 ## Motivation
 
-Turn this 💩
+Turn this 💩 💩 💩
 
 ```ts
 interface SetFirstNameAction {
@@ -49,7 +49,7 @@ function reducer(action: Action, state: State): State {
 }
 ```
 
-into this! 🚀
+✨✨ Into this! ✨✨
 
 ```ts
 import {ImmerReducer} from "immer-reducer";
@@ -65,7 +65,7 @@ class MyImmerReducer extends ImmerReducer<State> {
 }
 ```
 
-**Without losing the type-safety!** 🔥
+🔥🔥 **Without losing type-safety!** 🔥🔥
 
 Oh, and you get the action creators for free! 🤗 🎂
 
