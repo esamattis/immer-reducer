@@ -4,11 +4,11 @@ Create terse type-safe Redux reducers using [Immer](https://github.com/mweststra
 
 Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boilerplate-free-redux-906844ec6325).
 
-## Install
+## 📦 Install
 
     npm install immer-reducer
 
-## Motivation
+## 💪 Motivation
 
 Turn this 💩 💩 💩
 
@@ -69,7 +69,7 @@ class MyImmerReducer extends ImmerReducer<State> {
 
 Oh, and you get the action creators for free! 🤗 🎂
 
-## Usage
+## 📖 Usage
 
 Generate Action Creators and the actual reducer function for Redux from the class with
 
@@ -100,7 +100,7 @@ expect(store.getState().user.firstName).toEqual("Charlie");
 expect(store.getState().user.lastName).toEqual("Brown");
 ```
 
-## Typed Action Creators!
+## 🌟 Typed Action Creators!
 
 This library by no means requires you to use Typescript but it was written
 specifically Typescript usage in mind because I was unable to find any other
@@ -127,7 +127,7 @@ reducer(initialState, {type: "WAT"}); // Type error
 reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
 ```
 
-## How
+## 🤔 How
 
 Under the hood the class is deconstructed to following actions:
 
@@ -152,7 +152,7 @@ handled by the generated reducer function.
 The generated reducer function executes the methods inside the `produce()`
 function of Immer enabling the terse mutatable style updates.
 
-## Integrating with the Redux ecosystem
+## 🔄 Integrating with the Redux ecosystem
 
 To integrate for example with the side effects libraries such as
 [redux-observable](https://github.com/redux-observable/redux-observable/) and
@@ -203,13 +203,13 @@ function* handleImmerReducerAction(action: Actions<typeof MyImmerReducer>) {
 }
 ```
 
-## Examples
+## 📚 Examples
 
 Here's a more complete example with [redux-render-prop](https://github.com/epeli/redux-render-prop):
 
 <https://github.com/epeli/typescript-redux-todoapp>
 
-## Helpers
+## 📓 Helpers
 
 The module exports following helpers
 
