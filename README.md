@@ -74,25 +74,20 @@ Oh, and you get the action creators for free! 🤗 🎂
 Generate Action Creators and the actual reducer function for Redux from the class with
 
 ```ts
+import {createStore} from "redux";
 import {createActionCreators, createReducerFunction} from "immer-reducer";
 
-const ActionCreators = createActionCreators(MyImmerReducer);
-const reducerFunction = createReducerFunction(MyImmerReducer);
-```
-
-and create the Redux store
-
-```ts
-import {createStore} from "redux";
-
-const initialState = {
+const initialState: State = {
     user: {
         firstName: "",
         lastName: "",
     },
 };
 
-const store = createStore(reducerFunction, initialState);
+const ActionCreators = createActionCreators(MyImmerReducer);
+const reducerFunction = createReducerFunction(MyImmerReducer, initialState);
+
+const store = createStore(reducerFunction);
 ```
 
 Dispatch some actions
@@ -126,13 +121,6 @@ The reducer function is also typed properly
 
 ```ts
 const reducer = createReducerFunction(MyImmerReducer);
-
-const initialState: State = {
-    user: {
-        firstName: "",
-        lastName: "",
-    },
-};
 
 reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
 reducer(initialState, {type: "WAT"}); // Type error

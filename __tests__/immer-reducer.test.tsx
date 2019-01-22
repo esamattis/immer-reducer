@@ -78,8 +78,8 @@ test("can dispatch actions", () => {
     }
 
     const ActionCreators = createActionCreators(TestReducer);
-    const reducer = createReducerFunction(TestReducer);
-    const store = createStore(reducer, initialState);
+    const reducer = createReducerFunction(TestReducer, initialState);
+    const store = createStore(reducer);
 
     store.dispatch(ActionCreators.noop());
 
@@ -96,8 +96,8 @@ test("can update state", () => {
     }
 
     const ActionCreators = createActionCreators(TestReducer);
-    const reducer = createReducerFunction(TestReducer);
-    const store = createStore(reducer, initialState);
+    const reducer = createReducerFunction(TestReducer, initialState);
+    const store = createStore(reducer);
 
     store.dispatch(ActionCreators.setFoo("next"));
 
@@ -123,8 +123,8 @@ test("can update state using mutiple methods", () => {
     }
 
     const ActionCreators = createActionCreators(TestReducer);
-    const reducer = createReducerFunction(TestReducer);
-    const store = createStore(reducer, initialState);
+    const reducer = createReducerFunction(TestReducer, initialState);
+    const store = createStore(reducer);
 
     store.dispatch(ActionCreators.setBoth("next", 2));
 
@@ -142,10 +142,10 @@ test("the actual action type name is prefixed", () => {
 
     const ActionCreators = createActionCreators(TestReducer);
 
-    const reducer = createReducerFunction(TestReducer);
+    const reducer = createReducerFunction(TestReducer, initialState);
     const reducerSpy: typeof reducer = jest.fn(reducer);
 
-    const store = createStore(reducerSpy, initialState);
+    const store = createStore(reducerSpy);
 
     store.dispatch(ActionCreators.setFoo("next"));
 
@@ -182,8 +182,8 @@ test("can add helpers to the class", () => {
     }
 
     const ActionCreators = createActionCreators(TestReducer);
-    const reducer = createReducerFunction(TestReducer);
-    const store = createStore(reducer, initialState);
+    const reducer = createReducerFunction(TestReducer, initialState);
+    const store = createStore(reducer);
 
     store.dispatch(ActionCreators.combineToBar());
 
