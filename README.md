@@ -102,19 +102,23 @@ expect(store.getState().user.lastName).toEqual("Brown");
 
 ## 🌟 Typed Action Creators!
 
-This library by no means requires you to use Typescript but it was written
-specifically Typescript usage in mind because I was unable to find any other
-libraries that make Redux usage both terse and 100% type safe.
-
 The generated `ActionsTypes` object respect the types used in the class
 
 ```ts
 const action = ActionCreators.setFirstName("Charlie"); // OK
-action.payload[0]; // OK string type
+action.payload; // OK type string
 
-action.payload[1]; // Type error. Only one argument.
 ActionCreators.setFirstName(1); // Type error. Needs string.
 ActionCreators.setWAT("Charlie"); // Type error. Unknown method
+```
+
+If the reducer class where to have a method which takes more than one argument
+the payload would be array of the arguments
+
+```ts
+// setName(firstName: string, lastName: string) {}
+const action = ActionCreators.setName("Charlie", "Brown");
+action.payload; // will have value ["charlie", "brown"] and type [string, string]
 ```
 
 The reducer function is also typed properly
@@ -134,20 +138,26 @@ Under the hood the class is deconstructed to following actions:
 ```js
 {
     type: "IMMER_REDUCER:MyImmerReducer#setFirstName",
-    payload: ["Charlie"],
+    payload: "Charlie",
 }
 {
     type: "IMMER_REDUCER:MyImmerReducer#setLastName",
-    payload: ["Brown"],
+    payload: "Brown",
+}
+{
+    type: "IMMER_REDUCER:MyImmerReducer#setName",
+    payload: ["Charlie", "Brown"],
+    args: true
 }
 ```
 
-So the method names become the Redux Action Types and the method arguments
-become the action payloads. The reducer function will then match these
-actions against the class and calls the appropriate methods with the payload
-array spread to the arguments. But do note that the action format is not part
-of the public API so don't write any code relying on it. The actions are
-handled by the generated reducer function.
+So the class and method names become the Redux Action Types and the method
+arguments become the action payloads. The reducer function will then match
+these actions against the class and calls the appropriate methods with the
+payload array spread to the arguments.
+
+🚫 The format of the `action.type` string is internal to immer-reducer. If
+you need to detect the actions use the provided type guards.
 
 The generated reducer function executes the methods inside the `produce()`
 function of Immer enabling the terse mutatable style updates.
@@ -174,7 +184,7 @@ const setFirstNameEpic: Epic<SetFirstNameAction> = action$ =>
     .ofType(setFirstNameActionTypeName)
     .pipe(
       // action.payload - recognized as string
-      map(action => action.payload[0].toUpperCase()),
+      map(action => action.payload.toUpperCase()),
       ...
     );
 ```
@@ -226,10 +236,10 @@ if (isActionFrom(someAction, ActionCreators)) {
     // someAction now has type of
     // {
     //     type: "setFirstName";
-    //     payload: [string];
+    //     payload: string;
     // } | {
     //     type: "setLastName";
-    //     payload: [string];
+    //     payload: string;
     // };
 }
 ```
@@ -242,8 +252,7 @@ Example
 
 ```ts
 if (isAction(someAction, ActionCreators.setFirstName)) {
-    someAction.type; // Type checks to `"setFirstName"`
-    someAction.payload; // Type checks `[string]`
+    someAction.payload; // Type checks to `string`
 }
 ```
 
