@@ -455,15 +455,14 @@ test("single argument can be an array", () => {
 });
 
 test("single array argument is dispatched correctly", () => {
-    expect.assertions(2);
+    expect.assertions(1);
 
     class TestReducer extends ImmerReducer<{}> {
-        multiArg(foo: number, bar: string) {
-            expect(foo).toEqual(1);
-            expect(bar).toEqual("s");
+        arrayArg(arr: string[]) {
+            expect(arr).toEqual(["foo", "bar"]);
         }
     }
 
     const store = createStore(createReducerFunction(TestReducer, {}));
-    store.dispatch(createActionCreators(TestReducer).multiArg(1, "s"));
+    store.dispatch(createActionCreators(TestReducer).arrayArg(["foo", "bar"]));
 });
