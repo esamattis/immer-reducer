@@ -46,7 +46,7 @@ const ActionCreators = createActionCreators(MyReducer);
 // Action creator return Action Object
 const action: {
     type: "setBar";
-    payload: [number];
+    payload: number;
 } = ActionCreators.setBar(3);
 
 // the action creator does no return any
@@ -54,10 +54,13 @@ const action: {
 const is_not_any: AssertNotAny = ActionCreators.setBar(3);
 
 // actions without payload
-ActionCreators.setFooStatic();
+const staticAction = ActionCreators.setFooStatic();
+const staticPayload: [] = staticAction.payload;
 
 // Actions with multiple items in the payload
-ActionCreators.setBoth("foo", 1);
+const bothAction = ActionCreators.setBoth("foo", 1);
+
+const bothPayload: [string, number] = bothAction.payload;
 
 // Only function properties are picked
 // $ExpectError
@@ -98,7 +101,7 @@ const newState: State = reducer(
     {foo: "sdf", bar: 2},
     {
         type: "setBar",
-        payload: [3],
+        payload: 3,
     },
 );
 
@@ -108,7 +111,7 @@ const no_any_state: AssertNotAny = reducer(
     {foo: "f", bar: 2},
     {
         type: "setBar",
-        payload: [3],
+        payload: 3,
     },
 );
 
@@ -118,7 +121,7 @@ reducer(
     {foo: "sdf", bar: "should be number"},
     {
         type: "setBar",
-        payload: [3],
+        payload: 3,
     },
 );
 
@@ -132,7 +135,7 @@ reducer(
     // $ExpectError
     {
         type: "setBar",
-        payload: ["should be number here"],
+        payload: "should be number here",
     },
 );
 
@@ -142,7 +145,7 @@ reducer(
     {
         // $ExpectError
         type: "bad",
-        payload: [3],
+        payload: 3,
     },
 );
 
@@ -178,11 +181,11 @@ if (isAction(unknownAction, ActionCreators.setBar)) {
 
     const knownAction: {
         type: "setBar";
-        payload: [number];
+        payload: number;
     } = unknownAction;
 
     // $ExpectError
-    const nope: number = unknownAction.payload[2];
+    const nope: string = unknownAction.payload;
 }
 
 /////////////////////////////
@@ -209,11 +212,11 @@ const someActionsNotAny: AssertNotAny = someActions;
 const someActionsTest:
     | {
           type: "setFoo";
-          payload: [string];
+          payload: string;
       }
     | {
           type: "setBar";
-          payload: [number];
+          payload: number;
       } = someActions;
 
 type MyReducerActions = Actions<typeof Reducer1>;
@@ -225,11 +228,11 @@ const actions_not_any: AssertNotAny = myReducerActions;
 const actions_manual:
     | {
           type: "setFoo";
-          payload: [string];
+          payload: string;
       }
     | {
           type: "setBar";
-          payload: [number];
+          payload: number;
       } = myReducerActions;
 
 //////////////////////////
@@ -247,10 +250,10 @@ if (isActionFrom(someAction, ActionCreators1)) {
     const actions_manual:
         | {
               type: "setFoo";
-              payload: [string];
+              payload: string;
           }
         | {
               type: "setBar";
-              payload: [number];
+              payload: number;
           } = someAction;
 }
