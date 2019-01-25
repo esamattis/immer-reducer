@@ -102,7 +102,7 @@ expect(store.getState().user.lastName).toEqual("Brown");
 
 ## 🌟 Typed Action Creators!
 
-The generated `ActionsTypes` object respect the types used in the class
+The generated `ActionCreator` object respect the types used in the class
 
 ```ts
 const action = ActionCreators.setFirstName("Charlie"); // OK
