@@ -104,7 +104,7 @@ test("can update state", () => {
     expect(store.getState()).toEqual({foo: "next"});
 });
 
-test("can update state using mutiple methods", () => {
+test("can update state using multiple methods", () => {
     const initialState = {foo: "bar", bar: 1};
 
     class TestReducer extends ImmerReducer<typeof initialState> {
@@ -152,7 +152,7 @@ test("the actual action type name is prefixed", () => {
     expect(reducerSpy).toHaveBeenLastCalledWith(
         {foo: "bar"},
         {
-            payload: ["next"],
+            payload: "next",
             type: "IMMER_REDUCER:TestReducer#setFoo",
         },
     );
@@ -428,4 +428,42 @@ test("isAction can detect actions", () => {
 
     expect(isAction(action1, ActionCreators.setFoo)).toBe(true);
     expect(isAction(action2, ActionCreators.setFoo)).toBe(false);
+});
+
+test("single argument is the payload value", () => {
+    class TestReducer extends ImmerReducer<{}> {
+        singleArg(arg: string) {}
+    }
+    const action = createActionCreators(TestReducer).singleArg("foo");
+    expect(action.payload).toEqual("foo");
+});
+
+test("multiple arguments are as an array in the payload", () => {
+    class TestReducer extends ImmerReducer<{}> {
+        multiple(arg1: string, arg2: number) {}
+    }
+    const action = createActionCreators(TestReducer).multiple("foo", 2);
+    expect(action.payload).toEqual(["foo", 2]);
+});
+
+test("single argument can be an array", () => {
+    class TestReducer extends ImmerReducer<{}> {
+        singleArg(arg: string[]) {}
+    }
+    const action = createActionCreators(TestReducer).singleArg(["foo"]);
+    expect(action.payload).toEqual(["foo"]);
+});
+
+test("single array argument is dispatched correctly", () => {
+    expect.assertions(2);
+
+    class TestReducer extends ImmerReducer<{}> {
+        multiArg(foo: number, bar: string) {
+            expect(foo).toEqual(1);
+            expect(bar).toEqual("s");
+        }
+    }
+
+    const store = createStore(createReducerFunction(TestReducer, {}));
+    store.dispatch(createActionCreators(TestReducer).multiArg(1, "s"));
 });

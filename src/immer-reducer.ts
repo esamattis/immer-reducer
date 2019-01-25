@@ -5,6 +5,12 @@ let actionTypePrefix = "IMMER_REDUCER";
 /** get function arguments as tuple type */
 type ArgumentsType<T> = T extends (...args: infer V) => any ? V : never;
 
+/**
+ * Get the first value of tuple when the tuple length is 1 otherwise return the
+ * whole tuple
+ */
+type FirstOrAll<T> = T extends [infer V] ? V : T;
+
 /** Get union of function property names */
 type FunctionPropertyNames<T> = {
     [K in keyof T]: T[K] extends Function ? K : never
@@ -64,7 +70,7 @@ interface ImmerActionCreator<ActionTypeType, Payload extends any[]> {
 
     (...args: Payload): {
         type: ActionTypeType;
-        payload: Payload;
+        payload: FirstOrAll<Payload>;
     };
 }
 
@@ -75,6 +81,21 @@ export type ActionCreators<ClassActions extends ImmerReducerClass> = {
         ArgumentsType<InstanceType<ClassActions>[K]>
     >
 };
+
+/**
+ * Internal type for the action
+ */
+type ImmerAction =
+    | {
+          type: string;
+          payload: unknown;
+          args?: false;
+      }
+    | {
+          type: string;
+          payload: unknown[];
+          args: true;
+      };
 
 /**
  * Type guard for detecting actions created by immer reducer
@@ -198,6 +219,32 @@ function setCustomNameForDuplicates(immerReducerClass: typeof ImmerReducer) {
     KNOWN_REDUCER_CLASSES.push(immerReducerClass);
 }
 
+/**
+ * Convert function arguments to ImmerAction object
+ */
+function createImmerAction(type: string, args: unknown[]): ImmerAction {
+    if (args.length === 1) {
+        return {type, payload: args[0]};
+    }
+
+    return {
+        type,
+        payload: args,
+        args: true,
+    };
+}
+
+/**
+ * Get function arguments from the ImmerAction object
+ */
+function getArgsFromImmerAction(action: ImmerAction): unknown[] {
+    if (action.args) {
+        return action.payload;
+    }
+
+    return [action.payload];
+}
+
 export function createActionCreators<T extends ImmerReducerClass>(
     immerReducerClass: T,
 ): ActionCreators<T> & {__class: T} {
@@ -223,10 +270,7 @@ export function createActionCreators<T extends ImmerReducerClass>(
         )}#${key}`;
 
         const actionCreator = (...args: any[]) => {
-            return {
-                type,
-                payload: args,
-            };
+            return createImmerAction(type, args);
         };
         actionCreator.type = type;
         actionCreators[key] = actionCreator;
@@ -265,7 +309,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
         return produce(state as any, draftState => {
             const reducers: any = new immerReducerClass(draftState, state);
 
-            reducers[methodName](...action.payload);
+            reducers[methodName](...getArgsFromImmerAction(action));
 
             return draftState;
         });
