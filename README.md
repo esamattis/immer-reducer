@@ -269,11 +269,11 @@ type MyActions = Actions<typeof MyImmerReducer>;
 type MyActions =
     | {
           type: "setFirstName";
-          payload: [string];
+          payload: string;
       }
     | {
           type: "setLastName";
-          payload: [string];
+          payload: string;
       };
 ```
 
