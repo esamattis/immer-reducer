@@ -105,8 +105,8 @@ expect(store.getState().user.lastName).toEqual("Brown");
 The generated `ActionCreator` object respect the types used in the class
 
 ```ts
-const action = ActionCreators.setFirstName("Charlie"); // OK
-action.payload; // OK type string
+const action = ActionCreators.setFirstName("Charlie");
+action.payload; // Has the type of string
 
 ActionCreators.setFirstName(1); // Type error. Needs string.
 ActionCreators.setWAT("Charlie"); // Type error. Unknown method
@@ -170,7 +170,7 @@ To integrate for example with the side effects libraries such as
 generated action type using the `type` property of the action creator
 function.
 
-In redux-observable
+With redux-observable
 
 ```ts
 // Get the action name to subscribe to
@@ -189,7 +189,7 @@ const setFirstNameEpic: Epic<SetFirstNameAction> = action$ =>
     );
 ```
 
-In redux-saga
+With redux-saga
 
 ```ts
 function* watchFirstNameChanges() {
