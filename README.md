@@ -215,7 +215,7 @@ function* handleImmerReducerAction(action: Actions<typeof MyImmerReducer>) {
 
 ## 📚 Examples
 
-Here's a more complete example with [redux-render-prop](https://github.com/epeli/redux-render-prop):
+Here's a more complete example with redux-saga and [redux-render-prop](https://github.com/epeli/redux-render-prop):
 
 <https://github.com/epeli/typescript-redux-todoapp>
 
