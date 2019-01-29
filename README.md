@@ -116,9 +116,10 @@ If the reducer class where to have a method which takes more than one argument
 the payload would be array of the arguments
 
 ```ts
+// In the Reducer class:
 // setName(firstName: string, lastName: string) {}
 const action = ActionCreators.setName("Charlie", "Brown");
-action.payload; // will have value ["charlie", "brown"] and type [string, string]
+action.payload; // will have value ["Charlie", "Brown"] and type [string, string]
 ```
 
 The reducer function is also typed properly
