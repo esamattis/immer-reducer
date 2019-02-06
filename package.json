@@ -1,46 +1,46 @@
 {
-  "name": "immer-reducer",
-  "version": "0.6.0",
-  "description": "",
-  "main": "lib/immer-reducer.js",
-  "types": "lib/immer-reducer.d.ts",
-  "repository": {
-    "url": "https://github.com/epeli/immer-reducer"
-  },
-  "scripts": {
-    "test": "npm run dtslint && jest",
-    "build": "tsc --project tsconfig.build.json && rm -rf lib && mv build/src lib && rm -rf build",
-    "clean": "rm -rf lib build",
-    "dtslint": "tslint --project tsconfig.dtslint.json",
-    "prepublishOnly": "npm run test && npm run build"
-  },
-  "keywords": [
-    "typescript",
-    "immer"
-  ],
-  "author": "",
-  "license": "ISC",
-  "files": [
-    "lib"
-  ],
-  "devDependencies": {
-    "@types/jest": "^23.3.13",
-    "@types/react": "^16.7.20",
-    "@types/react-dom": "^16.0.11",
-    "@types/redux": "^3.6.0",
-    "dtslint": "^0.4.2",
-    "jest": "^23.6.0",
-    "prettier": "^1.16.0",
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
-    "react-testing-library": "^5.4.4",
-    "ts-jest": "^23.10.5",
-    "typescript": "~3.2.4"
-  },
-  "peerDependencies": {
-    "redux": "^4.0.0"
-  },
-  "dependencies": {
-    "immer": "^1.4.0"
-  }
+    "name": "immer-reducer",
+    "version": "0.6.0",
+    "description": "",
+    "main": "lib/immer-reducer.js",
+    "types": "lib/immer-reducer.d.ts",
+    "repository": {
+        "url": "https://github.com/epeli/immer-reducer"
+    },
+    "scripts": {
+        "test": "npm run dtslint && jest",
+        "build": "tsc --project tsconfig.build.json && rm -rf lib && mv build/src lib && rm -rf build",
+        "clean": "rm -rf lib build",
+        "dtslint": "tslint --project tsconfig.dtslint.json",
+        "prepublishOnly": "npm run test && npm run build"
+    },
+    "keywords": [
+        "typescript",
+        "immer"
+    ],
+    "author": "",
+    "license": "ISC",
+    "files": [
+        "lib"
+    ],
+    "devDependencies": {
+        "@types/jest": "^24.0.0",
+        "@types/react": "^16.8.1",
+        "@types/react-dom": "^16.0.11",
+        "@types/redux": "^3.6.0",
+        "dtslint": "^0.4.2",
+        "jest": "^24.1.0",
+        "prettier": "^1.16.4",
+        "react": "^16.8.0",
+        "react-dom": "^16.8.0",
+        "react-testing-library": "^5.4.4",
+        "ts-jest": "^23.10.5",
+        "typescript": "~3.3.1"
+    },
+    "peerDependencies": {
+        "redux": "^4.0.0"
+    },
+    "dependencies": {
+        "immer": "^1.4.0 || ^2.0.0"
+    }
 }
