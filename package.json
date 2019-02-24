@@ -33,7 +33,7 @@
     "prettier": "^1.16.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-testing-library": "^5.4.4",
+    "react-testing-library": "^6.0.0",
     "ts-jest": "^23.10.5",
     "typescript": "~3.2.4"
   },
