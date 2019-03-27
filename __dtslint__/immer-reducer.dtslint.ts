@@ -1,4 +1,4 @@
-import {Action} from "redux";
+import {Action, createStore, bindActionCreators} from "redux";
 
 import {
     ImmerReducer,
@@ -8,6 +8,7 @@ import {
     Actions,
     isActionFrom,
 } from "../src/immer-reducer";
+import {Dispatch} from "react";
 
 interface AssertNotAny {
     ___: "it should not be possible to assign to me";
@@ -257,3 +258,19 @@ if (isActionFrom(someAction, ActionCreators1)) {
               payload: number;
           } = someAction;
 }
+
+test("Can work with bindActionCreators", () => {
+    const initialState = {foo: ""};
+    const store = createStore(s => initialState);
+
+    class Reducer extends ImmerReducer<typeof initialState> {
+        setFoo(foo: string) {}
+    }
+
+    const ActionCreators = createActionCreators(Reducer);
+
+    const boundActionCreators = bindActionCreators(
+        ActionCreators,
+        store.dispatch,
+    );
+});
