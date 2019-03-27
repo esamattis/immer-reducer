@@ -135,11 +135,11 @@ function isActionFromClass<T extends ImmerReducerClass>(
     return true;
 }
 
-export function isActionFrom<T extends {__class: ImmerReducerClass}>(
+export function isActionFrom<T extends ImmerReducerClass>(
     action: {type: any},
-    actionCreators: T,
-): action is Actions<T["__class"]> {
-    return isActionFromClass(action, actionCreators.__class);
+    immerReducerClass: T,
+): action is Actions<T> {
+    return isActionFromClass(action, immerReducerClass);
 }
 
 /** The actual ImmerReducer class */
@@ -247,12 +247,10 @@ function getArgsFromImmerAction(action: ImmerAction): unknown[] {
 
 export function createActionCreators<T extends ImmerReducerClass>(
     immerReducerClass: T,
-): ActionCreators<T> & {__class: T} {
+): ActionCreators<T> {
     setCustomNameForDuplicates(immerReducerClass);
 
     const actionCreators: {[key: string]: Function} = {};
-
-    actionCreators.__class = immerReducerClass;
 
     Object.getOwnPropertyNames(immerReducerClass.prototype).forEach(key => {
         if (key === "constructor") {

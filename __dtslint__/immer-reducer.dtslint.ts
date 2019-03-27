@@ -244,7 +244,7 @@ declare const someAction: Action;
 
 const ActionCreators1 = createActionCreators(Reducer1);
 
-if (isActionFrom(someAction, ActionCreators1)) {
+if (isActionFrom(someAction, Reducer1)) {
     // $ExpectError
     const notany: AssertNotAny = someAction;
 

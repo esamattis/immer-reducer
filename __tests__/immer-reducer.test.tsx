@@ -408,8 +408,8 @@ test("isActionFrom can detect actions", () => {
         type: "other",
     };
 
-    expect(isActionFrom(action1, ActionCreators)).toBe(true);
-    expect(isActionFrom(action2, ActionCreators)).toBe(false);
+    expect(isActionFrom(action1, TestReducer)).toBe(true);
+    expect(isActionFrom(action2, TestReducer)).toBe(false);
 });
 
 test("isAction can detect actions", () => {
