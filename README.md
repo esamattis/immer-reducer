@@ -1,6 +1,6 @@
 # immer-reducer
 
-Create terse type-safe Redux reducers using [Immer](https://github.com/mweststrate/immer) and Typescript!
+Create terse type-safe Redux and `useReducer` Hook reducers using [Immer](https://github.com/mweststrate/immer) and Typescript!
 
 Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boilerplate-free-redux-906844ec6325).
 
@@ -131,6 +131,41 @@ reducer(initialState, ActionCreators.setFirstName("Charlie")); // OK
 reducer(initialState, {type: "WAT"}); // Type error
 reducer({wat: "bad state"}, ActionCreators.setFirstName("Charlie")); // Type error
 ```
+
+## ⚓ React Hooks
+
+Because the `useReducer()` API in React Hooks is the same as with Redux
+Reducers immer-reducer can be used with as is.
+
+```tsx
+const initialState = {message: ""};
+
+class ReducerClass extends ImmerReducer<typeof initialState> {
+    setMessage(message: string) {
+        this.draftState.message = message;
+    }
+}
+
+const ActionCreators = createActionCreators(ReducerClass);
+const reducerFuntion = createReducerFunction(ReducerClass);
+
+function Hello() {
+    const [state, dispatch] = React.useReducer(reducerFuntion, initialState);
+
+    return (
+        <button
+            data-testid="button"
+            onClick={() => {
+                dispatch(ActionCreators.setMessage("Hello!"));
+            }}
+        >
+            {state.message}
+        </button>
+    );
+}
+```
+
+The returned state and dispatch functions will be typed as you would expect.
 
 ## 🤔 How
 
