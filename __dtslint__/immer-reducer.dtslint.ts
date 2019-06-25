@@ -9,6 +9,7 @@ import {
     isActionFrom,
 } from "../src/immer-reducer";
 import {Dispatch} from "react";
+import React from "react";
 
 interface AssertNotAny {
     ___: "it should not be possible to assign to me";
@@ -273,4 +274,36 @@ test("Can work with bindActionCreators", () => {
         ActionCreators,
         store.dispatch,
     );
+});
+
+test("can use with React.useReducer()", () => {
+    const initialState = {foo: ""};
+
+    class Reducer extends ImmerReducer<typeof initialState> {
+        setFoo(foo: string) {}
+    }
+
+    const ActionCreators = createActionCreators(Reducer);
+    const reducerFuntion = createReducerFunction(Reducer);
+
+    function Component1() {
+        const [state, dispatch] = React.useReducer(
+            reducerFuntion,
+            initialState,
+        );
+
+        const callback = () => {
+            dispatch(ActionCreators.setFoo("test"));
+
+            // $ExpectError
+            dispatch("bad");
+
+            const foo: string = state.foo;
+
+            // $ExpectError
+            const bar: AssertNotAny = state.foo;
+        };
+
+        return null;
+    }
 });
