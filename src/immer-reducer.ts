@@ -302,14 +302,19 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             );
         }
 
-        const [_, methodName] = removePrefix(action.type).split("#");
+        const [_, methodName] = removePrefix(action.type as string).split("#");
 
-        return produce(state as any, draftState => {
+        return produce(state, draftState => {
             const reducers: any = new immerReducerClass(draftState, state);
 
-            reducers[methodName](...getArgsFromImmerAction(action));
+            reducers[methodName](...getArgsFromImmerAction(action as any));
 
-            return draftState;
+            // Workaround typing changes in Immer 3.x. This does not actually
+            // affect the exposed types by immer-reducer itself.
+
+            // Also using immer internally with anys like this allow us to
+            // support multiple versions of immer from 1.4 to 3.x
+            return draftState as any;
         });
     };
 }
