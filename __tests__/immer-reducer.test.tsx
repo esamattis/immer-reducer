@@ -482,3 +482,19 @@ test("puts only defined arguments to the action object", () => {
 
     expect(action.payload).toEqual([]);
 });
+
+test("puts only defined arguments to the action object", () => {
+    class TestReducer extends ImmerReducer<{}> {
+        doIt(oneArg: string) {}
+    }
+
+    // Simulate click handler type
+    let onClick = (first: string, second: string): any => {};
+
+    // "Pass action the event handler"
+    onClick = createActionCreators(TestReducer).doIt;
+
+    const action = onClick("yes", "nope");
+
+    expect(action.payload).toEqual("yes");
+});
