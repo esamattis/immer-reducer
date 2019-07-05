@@ -466,3 +466,19 @@ test("single array argument is dispatched correctly", () => {
     const store = createStore(createReducerFunction(TestReducer, {}));
     store.dispatch(createActionCreators(TestReducer).arrayArg(["foo", "bar"]));
 });
+
+test("puts only defined arguments to the action object", () => {
+    class TestReducer extends ImmerReducer<{}> {
+        doIt() {}
+    }
+
+    // Simulate click handler type
+    let onClick = (arg: string): any => {};
+
+    // "Pass action the event handler"
+    onClick = createActionCreators(TestReducer).doIt;
+
+    const action = onClick("nope");
+
+    expect(action.payload).toEqual([]);
+});

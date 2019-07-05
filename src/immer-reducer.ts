@@ -268,7 +268,15 @@ export function createActionCreators<T extends ImmerReducerClass>(
         )}#${key}`;
 
         const actionCreator = (...args: any[]) => {
-            return createImmerAction(type, args);
+            // Pass args to the action object only when the reducer method
+            // actually takes args. This for example avoids putting the event
+            // object inside the action object when a bound action creator is
+            // passed directly to a event handler
+            if (method.length > 0) {
+                return createImmerAction(type, args);
+            } else {
+                return createImmerAction(type, []);
+            }
         };
         actionCreator.type = type;
         actionCreators[key] = actionCreator;
