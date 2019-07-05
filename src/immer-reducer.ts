@@ -13,7 +13,7 @@ type FirstOrAll<T> = T extends [infer V] ? V : T;
 
 /** Get union of function property names */
 type FunctionPropertyNames<T> = {
-    [K in keyof T]: T[K] extends Function ? K : never
+    [K in keyof T]: T[K] extends Function ? K : never;
 }[keyof T];
 
 type MethodObject = {[key: string]: () => any};
@@ -23,7 +23,7 @@ type Methods<T> = Pick<T, FunctionPropertyNames<T>>;
 
 /** flatten functions in an object to their return values */
 type FlattenToReturnTypes<T extends MethodObject> = {
-    [K in keyof T]: ReturnType<T[K]>
+    [K in keyof T]: ReturnType<T[K]>;
 };
 
 /** get union of object value types */
@@ -79,7 +79,7 @@ export type ActionCreators<ClassActions extends ImmerReducerClass> = {
     [K in keyof Methods<InstanceType<ClassActions>>]: ImmerActionCreator<
         K,
         ArgumentsType<InstanceType<ClassActions>[K]>
-    >
+    >;
 };
 
 /**
@@ -192,9 +192,7 @@ function setCustomNameForDuplicates(immerReducerClass: typeof ImmerReducer) {
 
     if (duplicateCustomName) {
         throw new Error(
-            `There is already customName ${
-                immerReducerClass.customName
-            } defined for ${duplicateCustomName.name}`,
+            `There is already customName ${immerReducerClass.customName} defined for ${duplicateCustomName.name}`,
         );
     }
 
