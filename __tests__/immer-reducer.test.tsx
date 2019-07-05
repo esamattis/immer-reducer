@@ -498,3 +498,28 @@ test("puts only defined arguments to the action object", () => {
 
     expect(action.payload).toEqual("yes");
 });
+
+test("can replace the draft state with completely new state", () => {
+    const initialState = {foo: "bar", ding: "ding"};
+
+    class TestReducer extends ImmerReducer<typeof initialState> {
+        resetState() {
+            this.draftState = {
+                foo: "new",
+                ding: "new",
+            };
+        }
+    }
+
+    const ActionCreators = createActionCreators(TestReducer);
+
+    const reducer = createReducerFunction(TestReducer);
+    const store = createStore(reducer, initialState);
+
+    store.dispatch(ActionCreators.resetState());
+
+    expect(store.getState()).toEqual({
+        foo: "new",
+        ding: "new",
+    });
+});

@@ -146,7 +146,7 @@ export function isActionFrom<T extends ImmerReducerClass>(
 export class ImmerReducer<T> {
     static customName?: string;
     readonly state: T;
-    readonly draftState: Draft<T>; // Make read only states mutable using Draft
+    draftState: Draft<T>; // Make read only states mutable using Draft
 
     constructor(draftState: Draft<T>, state: T) {
         this.state = state;
@@ -308,6 +308,12 @@ export function createReducerFunction<T extends ImmerReducerClass>(
             const reducers: any = new immerReducerClass(draftState, state);
 
             reducers[methodName](...getArgsFromImmerAction(action as any));
+
+            // The reducer replaced the instance with completely new state so
+            // make that to be the next state
+            if (reducers.draftState !== draftState) {
+                return reducers.draftState;
+            }
 
             // Workaround typing changes in Immer 3.x. This does not actually
             // affect the exposed types by immer-reducer itself.
