@@ -142,6 +142,31 @@ export function isActionFrom<T extends ImmerReducerClass>(
     return isActionFromClass(action, immerReducerClass);
 }
 
+interface Reducer<State> {
+    (state: State | undefined, action: any): State;
+}
+
+/**
+ * Combine multiple reducers into a single one
+ *
+ * @param reducers two or more reducer
+ */
+export function composeReducers<State>(
+    ...reducers: (Reducer<State | undefined>)[]
+): Reducer<State> {
+    return (state: any, action: any) => {
+        return (
+            reducers.reduce((state, subReducer) => {
+                if (typeof subReducer === "function") {
+                    return subReducer(state, action);
+                }
+
+                return state;
+            }, state) || state
+        );
+    };
+}
+
 /** The actual ImmerReducer class */
 export class ImmerReducer<T> {
     static customName?: string;

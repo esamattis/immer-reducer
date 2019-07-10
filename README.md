@@ -352,3 +352,34 @@ Example
 ```ts
 setPrefix("MY_APP");
 ```
+
+### `function composeReducers<State>(...reducers)`
+
+Utility that reduces actions by applying them through multiple reducers.
+This helps in allowing you to split up your reducer logic to multiple `ImmerReducer`s
+if they affect the same part of your state
+
+Example
+
+```ts
+class MyNameReducer extends ImmerReducer<NamesState> {
+    setFirstName(firstName: string) {
+        this.draftState.firstName = firstName;
+    }
+
+    setLastName(lastName: string) {
+        this.draftState.lastName = lastName;
+    }
+}
+
+class MyAgeReducer extends ImmerReducer<AgeState> {
+    setAge(age: number) {
+        this.draftState.age = 8;
+    }
+}
+
+export const reducer = composeReducers(
+  createReducerFunction(MyNameReducer, initialState),
+  createReducerFunction(MyAgeReducer, initialState)
+)
+```

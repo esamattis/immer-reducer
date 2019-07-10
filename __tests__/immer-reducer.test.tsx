@@ -2,6 +2,7 @@ import {
     ImmerReducer,
     createReducerFunction,
     createActionCreators,
+    composeReducers,
     setPrefix,
     _clearKnownClasses,
     isAction,
@@ -10,35 +11,11 @@ import {
 
 import {createStore, combineReducers, Action} from "redux";
 
-interface Reducer<State> {
-    (state: State | undefined, action: any): State;
-}
-
 beforeEach(_clearKnownClasses);
 
 afterEach(() => {
     setPrefix("IMMER_REDUCER");
 });
-/**
- * Combine multiple reducers into a single one
- *
- * @param reducers two or more reducer
- */
-function composeReducers<State>(
-    ...reducers: (Reducer<State | undefined>)[]
-): Reducer<State> {
-    return (state: any, action: any) => {
-        return (
-            reducers.reduce((state, subReducer) => {
-                if (typeof subReducer === "function") {
-                    return subReducer(state, action);
-                }
-
-                return state;
-            }, state) || state
-        );
-    };
-}
 
 test("can create reducers", () => {
     const initialState = {foo: "bar"};
