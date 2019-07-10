@@ -249,6 +249,35 @@ function* handleImmerReducerAction(action: Actions<typeof MyImmerReducer>) {
 }
 ```
 
+**Warning:** Due to how immer-reducers action generation works, adding default
+parameters to the methods will NOT pass it to the action payload, which can
+make your reducer impure and the values will not be available in middlewares.
+
+```ts
+class MyImmerReducer extends ImmerReducer<State> {
+    addItem (id: string = uuid()) {
+        this.draftState.ids.push([id])
+    }
+}
+
+immerActions.addItem() // generates empty payload { payload: [] }
+```
+
+As a workaround, create custom action creator wrappers that pass the default parameters instead.
+
+```ts
+class MyImmerReducer extends ImmerReducer<State> {
+    addItem (id) {
+        this.draftState.ids.push([id])
+    }
+}
+
+const actions = {
+  addItem: () => immerActions.addItem(id)
+}
+```
+
+
 ## 📚 Examples
 
 Here's a more complete example with redux-saga and [redux-render-prop](https://github.com/epeli/redux-render-prop):
