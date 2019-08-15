@@ -26,7 +26,7 @@
     "devDependencies": {
         "@testing-library/react": "^8.0.4",
         "@types/jest": "^24.0.15",
-        "@types/react": "^16.8.22",
+        "@types/react": "^16.9.2",
         "@types/react-dom": "^16.8.4",
         "@types/redux": "^3.6.0",
         "dtslint": "^0.8.0",
