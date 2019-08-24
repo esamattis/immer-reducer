@@ -17,6 +17,20 @@ afterEach(() => {
     setPrefix("IMMER_REDUCER");
 });
 
+test("can detect inherited actions", () => {
+    class Parent extends ImmerReducer<any> {
+        setFoo(foo: string) {}
+    }
+
+    class Child extends Parent {
+        setFoo2(foo: string) {}
+    }
+
+    const actions = createActionCreators(Child);
+    expect(actions.setFoo).toBeTruthy();
+    expect(actions.setFoo2).toBeTruthy();
+});
+
 test("can create reducers", () => {
     const initialState = {foo: "bar"};
 

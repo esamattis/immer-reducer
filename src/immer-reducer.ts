@@ -268,18 +268,23 @@ function getArgsFromImmerAction(action: ImmerAction): unknown[] {
     return [action.payload];
 }
 
+function getAllPropertyNames (obj: object) {
+    const proto = Object.getPrototypeOf(obj);
+    const inherited: string[] = (proto) ? getAllPropertyNames(proto) : [];
+    return Array.from(new Set(Object.getOwnPropertyNames(obj).concat(inherited)));
+}
+
 export function createActionCreators<T extends ImmerReducerClass>(
     immerReducerClass: T,
 ): ActionCreators<T> {
     setCustomNameForDuplicates(immerReducerClass);
 
     const actionCreators: {[key: string]: Function} = {};
-
-    Object.getOwnPropertyNames(immerReducerClass.prototype).forEach(key => {
-        if (key === "constructor") {
+    const immerReducerProperties = getAllPropertyNames(ImmerReducer.prototype);
+    getAllPropertyNames(immerReducerClass.prototype).forEach(key => {
+        if (immerReducerProperties.includes(key)) {
             return;
         }
-
         const method = immerReducerClass.prototype[key];
 
         if (typeof method !== "function") {
