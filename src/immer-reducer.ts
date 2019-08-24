@@ -268,10 +268,12 @@ function getArgsFromImmerAction(action: ImmerAction): unknown[] {
     return [action.payload];
 }
 
-function getAllPropertyNames (obj: object) {
+function getAllPropertyNames(obj: object) {
     const proto = Object.getPrototypeOf(obj);
-    const inherited: string[] = (proto) ? getAllPropertyNames(proto) : [];
-    return Array.from(new Set(Object.getOwnPropertyNames(obj).concat(inherited)));
+    const inherited: string[] = proto ? getAllPropertyNames(proto) : [];
+    return Array.from(
+        new Set(Object.getOwnPropertyNames(obj).concat(inherited)),
+    );
 }
 
 export function createActionCreators<T extends ImmerReducerClass>(
