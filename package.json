@@ -1,6 +1,6 @@
 {
     "name": "immer-reducer",
-    "version": "0.7.6",
+    "version": "0.7.7",
     "description": "",
     "main": "lib/immer-reducer.js",
     "types": "lib/immer-reducer.d.ts",
