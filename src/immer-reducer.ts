@@ -313,7 +313,13 @@ export function createActionCreators<T extends ImmerReducerClass>(
 }
 
 function getReducerName(klass: {name: string; customName?: string}) {
-    return klass.customName || klass.name;
+    const name = klass.customName || klass.name;
+    if (!name) {
+        throw new Error(
+            `immer-reducer failed to get reducer name for a class. Try adding 'static customName = "name"'`,
+        );
+    }
+    return name;
 }
 
 export function createReducerFunction<T extends ImmerReducerClass>(
