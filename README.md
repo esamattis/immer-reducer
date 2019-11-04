@@ -284,6 +284,29 @@ Here's a more complete example with redux-saga and [redux-render-prop](https://g
 
 <https://github.com/epeli/typescript-redux-todoapp>
 
+## 🃏 Tips and Tricks
+
+You can replace the whole `draftState` with a new state if you'd like. This could be useful if you'd like to reset back to your initial state.
+
+```ts
+import {ImmerReducer} from "immer-reducer";
+
+const initialState: State = {
+    user: {
+        firstName: "",
+        lastName: "",
+    },
+};
+
+class MyImmerReducer extends ImmerReducer<State> {
+    // omitting other reducer methods
+    
+    reset() {
+        this.draftState = initialState;
+    }
+}
+```
+
 ## 📓 Helpers
 
 The module exports following helpers
