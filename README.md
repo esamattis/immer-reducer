@@ -8,6 +8,8 @@ Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boi
 
     npm install immer-reducer
 
+You can also install [eslint-plugin-immer-reducer](https://github.com/skoshy/eslint-plugin-immer-reducer) to help you avoid errors when writing your reducer.
+
 ## 💪 Motivation
 
 Turn this 💩 💩 💩
@@ -277,6 +279,8 @@ const actions = {
 }
 ```
 
+It is also recommended to install the ESLint plugin in the "Install" section
+to alert you if you accidentally encounter this issue.
 
 ## 📚 Examples
 
