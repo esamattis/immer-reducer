@@ -1,8 +1,6 @@
 # immer-reducer
 
-Create terse type-safe Redux and `useReducer` Hook reducers using [Immer](https://github.com/mweststrate/immer) and Typescript!
-
-Read an introductory [blog post here](https://medium.com/@esamatti/type-safe-boilerplate-free-redux-906844ec6325).
+Type-safe and terse reducers with Typescript for React Hooks and Redux using [Immer](https://immerjs.github.io/immer/)!
 
 ## 📦 Install
 
