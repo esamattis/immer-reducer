@@ -57,7 +57,7 @@ export type ImmerReducerState<T> = T extends {
     : never;
 
 /** generate reducer function type from the ImmerReducer class */
-interface ImmerReducerFunction<T extends ImmerReducerClass> {
+export interface ImmerReducerFunction<T extends ImmerReducerClass> {
     (
         state: ImmerReducerState<T> | undefined,
         action: ReturnTypeUnion<ActionCreators<T>>,
