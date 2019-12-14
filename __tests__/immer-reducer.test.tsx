@@ -6,7 +6,7 @@ import {
     setPrefix,
     _clearKnownClasses,
     isAction,
-    isActionFrom,
+    isActionFrom, beginAccumulatingPatches, popAccumulatedPatches,
 } from "../src/immer-reducer";
 
 import {createStore, combineReducers, Action} from "redux";
@@ -513,4 +513,55 @@ test("can replace the draft state with completely new state", () => {
         foo: "new",
         ding: "new",
     });
+});
+
+test("can accumulate patches", () => {
+    interface IState {
+        foo?: string;
+        bar?: string;
+    }
+
+    const initialState: IState = {foo: "foo"};
+
+    class TestReducer extends ImmerReducer<IState> {
+        setFoo(foo: string) {
+            this.draftState.foo = foo;
+        }
+
+        clearFoo() {
+            delete this.draftState.foo;
+        }
+
+        setBar(bar: string) {
+            this.draftState.bar = bar;
+        }
+    }
+
+    const ActionCreators = createActionCreators(TestReducer);
+
+    const reducer = createReducerFunction(TestReducer);
+    const store = createStore(reducer, initialState);
+
+    beginAccumulatingPatches();
+    store.dispatch(ActionCreators.setFoo("foo2"));
+    store.dispatch(ActionCreators.setBar("bar"));
+    store.dispatch(ActionCreators.clearFoo());
+
+    expect(popAccumulatedPatches()).toEqual([
+        {
+            op: "replace",
+            path: ["foo"],
+            value: "foo2"
+        },
+        {
+            op: "add",
+            path: ["bar"],
+            value: "bar"
+        },
+        {
+            op: "remove",
+            path: ["foo"]
+        }]);
+
+    expect(popAccumulatedPatches()).toEqual([]);
 });

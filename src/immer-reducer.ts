@@ -1,6 +1,8 @@
-import produce, {Draft} from "immer";
+import produce, {Draft, Patch, produceWithPatches} from "immer";
 
-let actionTypePrefix = "IMMER_REDUCER";
+let actionTypePrefix : string = "IMMER_REDUCER";
+let accumulatePatches : boolean = false;
+let patches : Patch[] = [];
 
 /** get function arguments as tuple type */
 type ArgumentsType<T> = T extends (...args: infer V) => any ? V : never;
@@ -345,7 +347,7 @@ export function createReducerFunction<T extends ImmerReducerClass>(
 
         const [_, methodName] = removePrefix(action.type as string).split("#");
 
-        return produce(state, draftState => {
+        const reducer = (draftState : T) => {
             const reducers: any = new immerReducerClass(draftState, state);
 
             reducers[methodName](...getArgsFromImmerAction(action as any));
@@ -363,12 +365,36 @@ export function createReducerFunction<T extends ImmerReducerClass>(
 
             // Also using immer internally with anys like this allow us to
             // support multiple versions of immer.
-        }) as any;
+        };
+
+        if (accumulatePatches) {
+            const [newState, newPatches, _] = produceWithPatches(state, reducer);
+            patches.push(...newPatches);
+            return newState as any;
+        } else {
+            return produce(state, reducer) as any;
+        }
     };
 }
 
 export function setPrefix(prefix: string): void {
     actionTypePrefix = prefix;
+}
+
+export function beginAccumulatingPatches(): void {
+    accumulatePatches = true;
+    patches = [];
+}
+
+export function popAccumulatedPatches(): Patch[] {
+    const accumulated = patches;
+    patches = [];
+    return accumulated;
+}
+
+export function stopAccumulatingPatches(): void {
+    accumulatePatches = false;
+    patches = []
 }
 
 /**
