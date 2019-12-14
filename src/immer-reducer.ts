@@ -46,6 +46,7 @@ export type Actions<T extends ImmerReducerClass> = ReturnTypeUnion<
 /** type constraint for the ImmerReducer class  */
 export interface ImmerReducerClass {
     customName?: string;
+    patchPathPrefix?: string[];
     new (...args: any[]): ImmerReducer<any>;
 }
 
@@ -172,6 +173,7 @@ export function composeReducers<State>(
 /** The actual ImmerReducer class */
 export class ImmerReducer<T> {
     static customName?: string;
+    static patchPathPrefix?: string[];
     readonly state: T;
     draftState: Draft<T>; // Make read only states mutable using Draft
 
@@ -368,7 +370,11 @@ export function createReducerFunction<T extends ImmerReducerClass>(
         };
 
         if (accumulatePatches) {
-            const [newState, newPatches, _] = produceWithPatches(state, reducer);
+            const [newState, newPatches, _]: [T, Patch[], Patch[]] = produceWithPatches(state, reducer);
+            if (immerReducerClass.patchPathPrefix) {
+                newPatches.forEach(patch =>
+                    patch.path.unshift(...immerReducerClass.patchPathPrefix!));
+            }
             patches.push(...newPatches);
             return newState as any;
         } else {
@@ -394,7 +400,7 @@ export function popAccumulatedPatches(): Patch[] {
 
 export function stopAccumulatingPatches(): void {
     accumulatePatches = false;
-    patches = []
+    patches = [];
 }
 
 /**
