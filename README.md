@@ -147,10 +147,10 @@ class ReducerClass extends ImmerReducer<typeof initialState> {
 }
 
 const ActionCreators = createActionCreators(ReducerClass);
-const reducerFuntion = createReducerFunction(ReducerClass);
+const reducerFunction = createReducerFunction(ReducerClass);
 
 function Hello() {
-    const [state, dispatch] = React.useReducer(reducerFuntion, initialState);
+    const [state, dispatch] = React.useReducer(reducerFunction, initialState);
 
     return (
         <button
