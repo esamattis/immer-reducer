@@ -19,7 +19,7 @@
         "immer"
     ],
     "author": "",
-    "license": "ISC",
+    "license": "MIT",
     "files": [
         "lib"
     ],
