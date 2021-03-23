@@ -152,7 +152,7 @@ interface Reducer<State> {
  * @param reducers two or more reducer
  */
 export function composeReducers<State>(
-    ...reducers: (Reducer<State | undefined>)[]
+    ...reducers: Reducer<State | undefined>[]
 ): Reducer<State> {
     return (state: any, action: any) => {
         return (
