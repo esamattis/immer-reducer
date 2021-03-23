@@ -356,13 +356,14 @@ export function createReducerFunction<T extends ImmerReducerClass>(
                 return reducers.draftState;
             }
 
-            // Workaround typing changes in Immer 3.x. This does not actually
+            return draftState;
+
+            // Workaround typing changes in Immer 9.x. This does not actually
             // affect the exposed types by immer-reducer itself.
 
             // Also using immer internally with anys like this allow us to
-            // support multiple versions of immer from 1.4 to 3.x
-            return draftState as any;
-        });
+            // support multiple versions of immer.
+        }) as any;
     };
 }
 
