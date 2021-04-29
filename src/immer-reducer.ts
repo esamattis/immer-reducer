@@ -377,3 +377,28 @@ export function setPrefix(prefix: string): void {
 export function _clearKnownClasses() {
     KNOWN_REDUCER_CLASSES = [];
 }
+
+/**
+ * https://webpack.js.org/api/hot-module-replacement/#module-api
+ */
+interface WebpackModule {
+    hot?: {
+        status(): string;
+        addStatusHandler: (handler: (status: string) => void) => void;
+    };
+}
+
+/**
+ * Webpack Module global if using Wepback
+ */
+declare const module: WebpackModule | undefined;
+
+if (typeof module !== "undefined") {
+    // Clear classes on Webpack Hot Module replacement as it will mess up the
+    // duplicate checks appear
+    module.hot?.addStatusHandler((status) => {
+        if (status === "prepare") {
+            _clearKnownClasses();
+        }
+    });
+}
