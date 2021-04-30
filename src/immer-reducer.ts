@@ -384,7 +384,7 @@ export function _clearKnownClasses() {
 interface WebpackModule {
     hot?: {
         status(): string;
-        addStatusHandler: (handler: (status: string) => void) => void;
+        addStatusHandler?: (handler: (status: string) => void) => void;
     };
 }
 
@@ -396,7 +396,7 @@ declare const module: WebpackModule | undefined;
 if (typeof module !== "undefined") {
     // Clear classes on Webpack Hot Module replacement as it will mess up the
     // duplicate checks appear
-    module.hot?.addStatusHandler((status) => {
+    module.hot?.addStatusHandler?.(status => {
         if (status === "prepare") {
             _clearKnownClasses();
         }
